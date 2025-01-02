@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">
+                    {{ profile_user.username }}
+                    {% if profile_user.is_advertise %}
+                        <span class="badge bg-primary ms-2">광고주</span>
+                    {% endif %}
+                    {% if profile_user.is_admin %}
+                        <span class="badge bg-primary ms-2">관리자</span>
+                    {% endif %}
+                </h2>
+                {% if user.is_authenticated and user != profile_user %}
+                <div>
+                    <a href="{% url 'board:send_message' %}?receiver={{ profile_user.username }}" 
+                       class="btn btn-primary">
+                        쪽지 보내기
+                    </a>
+                    <a href="#" onclick="showReportDialog('{{ profile_user.username }}')" class="btn btn-primary">신고하기</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                {% if profile_user.business_type %}
+                    <p class="mb-2">
+                        <strong>업종:</strong> 
+                        {{ profile_user.business_type.name }}
+                    </p>
+                {% endif %}
+                
+                {% if profile_user.business_name %}
+                    <p class="mb-2">
+                        <strong>사업장:</strong> 
+                        {{ profile_user.business_name }}
+                    </p>
+                {% endif %}
+
+                {% if introduction %}
+                    <p class="mb-2">
+                        <strong>자기소개:</strong> 
+                        {{ introduction }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    /* 전체 카드 스타일 */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* 프로필 헤더 영역 */
+    .card-title {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* 뱃지 스타일 */
+    .badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .badge.bg-primary {
+        background-color: #edf2ff !important;
+        color: #0d6efd;
+    }
+
+    /* 버튼 스타일 */
+    .btn-primary {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        margin-left: 0.5rem;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:first-child {
+        margin-left: 0;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+    }
+
+    /* 프로필 정보 영역 */
+    .mt-4 {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem !important;
+    }
+
+    .mt-4 p {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        margin: 0 !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .mt-4 p:last-child {
+        border-bottom: none;
+    }
+
+    .mt-4 strong {
+        min-width: 80px;
+        color: #495057;
+        margin-right: 1rem;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .container {
+            padding: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+
+        /* 헤더 영역 모바일 조정 */
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .d-flex.justify-content-between > div {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            flex: 1;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            white-space: nowrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* 프로필 정보 영역 모바일 조정 */
+        .mt-4 {
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .mt-4 strong {
+            min-width: 70px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* 애니메이션 효과 */
+    .card {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

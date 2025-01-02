@@ -1,0 +1,37 @@
+<!-- board/templates/board/message_detail.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    {% if request.user == message.receiver %}
+                        보낸사람: {{ message.sender.username }}
+                    {% else %}
+                        받는사람: {{ message.receiver.username }}
+                    {% endif %}
+                </h5>
+                <small class="text-muted">{{ message.created_at|date:"Y.m.d H:i" }}</small>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="message-content mb-4">
+                {{ message.content|linebreaks }}
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'board:message_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> 목록으로
+                </a>
+                {% if request.user == message.receiver %}
+                    <a href="{% url 'board:send_message' %}?reply_to={{ message.sender.username }}" 
+                       class="btn btn-primary">
+                        <i class="bi bi-reply"></i> 답장하기
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

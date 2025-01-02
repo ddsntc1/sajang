@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+{% load board_filter %}
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<div class="container my-4">
+    {% if messages %}
+    <div class="alert alert-danger my-3">
+        {% for message in messages %}
+            <strong>{{message.tags}}</strong>
+            <ul><li>{{message.message}}</li></ul>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 게시글 영역 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ question.subject }}</h4>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted">
+                    <i class="bi bi-eye"></i> {{ question.view_count }}
+                </span>
+                <span class="text-muted"><div class="username-action">
+                    <span>{{ question.author.username }}</span>
+                    <div class="username-dropdown">
+                        <a href="{% url 'common:user_profile' username=question.author.username %}">프로필 보기</a>
+                        {% if user.is_authenticated and user != question.author %}
+                            <a href="{% url 'board:send_message' %}?receiver={{ question.author.username }}">쪽지 보내기</a>
+                            <a href="#" onclick="showReportDialog('{{ question.author.username }}')">신고하기</a>
+                        {% endif %}
+                    </div>
+                </div></span>
+                <span class="text-muted">{{ question.create_date|date:"Y.m.d H:i" }}</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">{{ question.content|mark }}</div>
+            {% if user.is_authenticated %}
+                <button class="bookmark-btn btn btn-sm btn-outline-warning" data-question-id="{{ question.id }}"
+                    {% if user in question.bookmarks.all %}data-bookmarked="true"{% endif %}>
+                    <i class="bi {% if user in question.bookmarks.all %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                    {% if user in question.bookmarks.all %}
+                        관심글 취소
+                    {% else %}
+                        관심글 등록
+                    {% endif %}
+                </button> 
+            {% endif %}
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="vote-container d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary vote-btn" data-uri="{% url 'board:upvote_question' question.id %}">
+                        <i class="bi bi-hand-thumbs-up"></i> <span>{{question.up_voter.count}}</span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger vote-btn" data-uri="{% url 'board:downvote_question' question.id %}">
+                        <i class="bi bi-hand-thumbs-down"></i> <span>{{question.down_voter.count}}</span>
+                    </button>
+                </div>
+                
+                {% if request.user == question.author %}
+                <div>
+                    <a href="{% url 'board:question_modify' question.id %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'board:question_delete' question.id %}">삭제</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 답변 목록 -->
+    <div class="mb-3">
+        <h5 class="border-bottom pb-2">답변 {{question.answer_set.count}}개</h5>
+    </div>
+
+    {% for answer in question.answer_set.all %}
+    <a name="answer_{{answer.id}}"></a>   <!--앵커 엘리먼트 & answer_view 수정-->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="mb-3">{{answer.content|mark}}</div>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary vote-btn" data-uri="{% url 'board:upvote_answer' answer.id %}">
+                        <i class="bi bi-hand-thumbs-up"></i> <span>{{answer.up_voter.count}}</span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger vote-btn" data-uri="{% url 'board:downvote_answer' answer.id %}">
+                        <i class="bi bi-hand-thumbs-down"></i> <span>{{answer.down_voter.count}}</span>
+                    </button>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-muted small">
+                        <div class="username-action">
+                            <span>{{ answer.author.username }}</span>
+                            <div class="username-dropdown">
+                                <a href="{% url 'common:user_profile' username=answer.author.username %}">프로필 보기</a>
+                                {% if user.is_authenticated and user != answer.author %}
+                                    <a href="{% url 'board:send_message' %}?receiver={{ answer.author.username }}">쪽지 보내기</a>
+                                    <a href="#" onclick="showReportDialog('{{ answer.author.username }}')">신고하기</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {{ answer.create_date|date:"Y.m.d H:i" }}
+                        {% if answer.modify_date %}
+                        (수정됨)
+                        {% endif %}
+                    </div>
+                    {% if request.user == answer.author %}
+                    <div>
+                        <a href="{% url 'board:answer_modify' answer.id %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'board:answer_delete' answer.id %}">삭제</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- 답변 작성 폼 -->
+    <form action="{% url 'board:answer_create' question.id %}" method="post" class="card">
+        {% csrf_token %}
+        <div class="card-body">
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field in form %}
+                    {% if field.errors %}
+                    <strong>{{ field.label }}</strong>
+                    {{ field.errors }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="mb-3">
+                <textarea name="content" class="form-control" rows="5" 
+                    {% if not user.is_authenticated %}disabled{% endif %}
+                    placeholder="답변을 작성하세요"></textarea>
+            </div>
+            <div class="text-end">
+                <input type="submit" value="답변 등록" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+
+        {% if question.category.type == 'advertise' %}
+        {% if user.is_admin or user == question.author %}
+            {% if question.advertisement %}
+                <!-- 이미 등록된 광고가 있는 경우 -->
+                <div class="card-footer">
+                    <h5>등록된 광고 정보</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- 메인 배너 -->
+                            <h6>메인 배너</h6>
+                            {% if question.advertisement.main_banner %}
+                                <img src="{{ question.advertisement.main_banner.url }}" 
+                                    class="img-fluid mb-3" alt="메인 배너">
+                            {% endif %}
+                            <!-- 사이드 배너 -->
+                            <h6>사이드 배너</h6>
+                            {% if question.advertisement.side_banner %}
+                                <img src="{{ question.advertisement.side_banner.url }}" 
+                                    class="img-fluid mb-3" alt="사이드 배너">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>상태:</strong> {{ question.advertisement.get_status_display }}</p>
+                            {% if question.advertisement.external_link %}
+                                <p><strong>외부 링크:</strong> 
+                                    <a href="{{ question.advertisement.external_link }}" target="_blank">
+                                        바로가기
+                                    </a>
+                                </p>
+                            {% endif %}
+                            {% if question.advertisement.start_date %}
+                                <p><strong>광고 기간:</strong> 
+                                    {{ question.advertisement.start_date|date:"Y-m-d" }} ~ 
+                                    {{ question.advertisement.end_date|date:"Y-m-d" }}
+                                </p>
+                            {% endif %}
+                            
+                            <!-- 수정/삭제 버튼 -->
+                            {% if user == question.author or user.is_admin %}
+                            <div class="mt-3">
+                                <a href="{% url 'board:advertisement_modify' question.id %}" 
+                                class="btn btn-outline-primary btn-sm">
+                                    광고 수정
+                                </a>
+                                <a href="{% url 'board:advertisement_delete' question.id %}" 
+                                class="btn btn-outline-danger btn-sm">
+                                    광고 삭제
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- 광고가 등록되지 않은 경우 -->
+                <div class="card-footer">
+                    <div class="text-center">
+                        <p class="mb-2">아직 광고가 등록되지 않았습니다.</p>
+                        <a href="{% url 'board:advertisement_create' question.id %}" 
+                        class="btn btn-primary">
+                            광고 등록하기
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+    $(".delete").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = $(this).data('uri');
+        }
+    });
+    
+    $(".vote-btn").on('click', function() {
+        location.href = $(this).data('uri');
+    });
+});
+</script>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+<script>
+    document.querySelectorAll('.bookmark-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const questionId = this.dataset.questionId;
+            fetch(`{% url 'board:bookmark_question' question.id %}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.is_bookmarked) {
+                    this.textContent = '⭐ 관심글 취소';
+                } else {
+                    this.textContent = '☆ 관심글 등록';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('관심글 등록/취소 중 오류가 발생했습니다.');
+            });
+        });
+    });
+</script>
+
+<style>
+    /* 카드 스타일 개선 */
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* 게시글 헤더 스타일 */
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 1rem;
+    }
+
+    /* 모바일 대응을 위한 헤더 조정 */
+    @media (max-width: 767.98px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5rem;
+        }
+        
+        .card-header h4 {
+            font-size: 1.2rem;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        .card-header .d-flex {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    /* 버튼 스타일 개선 */
+    .btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 4px;
+    }
+
+    .vote-btn {
+        min-width: 80px;
+    }
+
+    /* 투표 버튼 호버 효과 */
+    .vote-btn:hover {
+        transform: translateY(-1px);
+        transition: transform 0.2s;
+    }
+
+    /* 답변 섹션 스타일 */
+    .answer-section {
+        margin-top: 2rem;
+    }
+
+    .answer-section h5 {
+        font-size: 1.1rem;
+        color: #495057;
+    }
+
+    /* 답변 카드 스타일 */
+    .card.mb-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    /* 답변 작성 폼 */
+    textarea.form-control {
+        border-radius: 6px;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    /* 유저네임 액션 스타일 개선 */
+    .username-action {
+        position: relative;
+        display: inline-block;
+    }
+
+    .username-action span {
+        color: #2c7be5;
+        cursor: pointer;
+    }
+
+    .username-dropdown {
+        display: none;
+        position: absolute;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 0.5rem 0;
+        z-index: 1000;
+        min-width: 150px;
+    }
+
+    .username-action:hover .username-dropdown {
+        display: block;
+    }
+
+    .username-dropdown a {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #495057;
+        text-decoration: none;
+    }
+
+    .username-dropdown a:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* 아이콘 스타일 */
+    .bi {
+        margin-right: 0.25rem;
+    }
+
+    /* 북마크 버튼 스타일 */
+    .bookmark-btn {
+        margin-bottom: 1rem;
+    }
+
+    /* 수정/삭제 버튼 그룹 스타일 */
+    .btn-group-sm > .btn {
+        margin-left: 0.25rem;
+    }
+
+    /* 컨텐츠 영역 스타일 */
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-body .mb-4 {  /* 게시글 내용을 담고 있는 div의 클래스 */
+        min-height: 300px;  /* 원하는 최소 높이 값으로 조정 가능 */
+    }
+
+    .card-body .mb-4 img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 1rem 0;
+    }
+
+    /* 광고 섹션 스타일 */
+    .card-footer {
+        background-color: #f8f9fa;
+        padding: 1rem;
+    }
+
+    .img-fluid {
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

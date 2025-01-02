@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>회원 탈퇴</h2>
+    <div class="alert alert-danger">
+        <p>정말로 계정을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="confirm_delete" value="yes">
+        <button type="submit" class="btn btn-danger">회원 탈퇴 확인</button>
+        <a href="{%url 'board:index'%}" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+  
+{% endblock  %}

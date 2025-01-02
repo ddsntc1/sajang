@@ -1,0 +1,206 @@
+<!-- board/templates/board/send_message.html -->
+{% extends 'base.html' %}
+{% block content %}
+<!-- HTML 수정 부분 -->
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h2 class="card-title mb-0">새 쪽지 작성</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label for="receiver" class="form-label">받는 사람</label>
+                    <div class="input-group">
+                        <input type="text" name="receiver" id="receiver" 
+                               class="form-control" 
+                               value="{% if initial_receiver %}{{ initial_receiver.username }}{% endif %}" 
+                               {% if initial_receiver %}readonly{% endif %}
+                               placeholder="받는 사람의 아이디를 입력하세요">
+                        {% if initial_receiver %}
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        {% endif %}
+                    </div>
+                    <div id="searchResults" class="list-group mt-2"></div>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" name="content" 
+                              rows="5" required 
+                              placeholder="메시지 내용을 입력하세요"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> 보내기</button>
+                    <a href="{% url 'board:message_list' %}" class="btn btn-outline-secondary">취소</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 카드 스타일 */
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 1.25rem;
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        color: #2c3e50;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* 폼 요소 스타일 */
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 0.625rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
+    }
+
+    /* 입력창 스타일 */
+    .input-group {
+        position: relative;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+    }
+
+    /* 검색 결과 스타일 */
+    #searchResults {
+        position: absolute;
+        z-index: 1000;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 6px;
+    }
+
+    .list-group-item-action {
+        border: none;
+        padding: 0.75rem 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .list-group-item-action:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    /* 버튼 스타일 */
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-1px);
+    }
+
+    .btn-outline-secondary {
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+        color: #495057;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .container {
+            padding: 0.5rem;
+        }
+
+        .card-header {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+
+        .form-control, .btn {
+            font-size: 0.95rem;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block script %}
+<script>
+let searchTimeout = null;
+
+document.getElementById('receiver').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+    
+    searchTimeout = setTimeout(() => {
+        if (query.length >= 2) {
+            fetch(`/board/api/search-users/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(users => {
+                    const resultsDiv = document.getElementById('searchResults');
+                    resultsDiv.innerHTML = '';
+                    users.forEach(user => {
+                        const button = document.createElement('button');
+                        button.className = 'list-group-item list-group-item-action';
+                        button.textContent = user.username;
+                        button.onclick = function(e) {
+                            e.preventDefault();
+                            document.getElementById('receiver').value = user.username;
+                            resultsDiv.innerHTML = '';
+                        };
+                        resultsDiv.appendChild(button);
+                    });
+                });
+        }
+    }, 300);
+});
+</script>
+{% endblock %}

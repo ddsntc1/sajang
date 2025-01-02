@@ -1,0 +1,232 @@
+<!-- board/templates/board/search_results.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+    <h2>검색 결과: "{{ query }}"</h2> 
+    
+    
+    {% if search_users %}
+    <div class="users-section mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="h5 mb-0">사용자 검색 결과</h3>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for user_id, username in search_users.items %}
+                    <div class="col">
+                        <div class="user-card h-100">
+                            <a href="{% url 'common:user_profile' username=username %}" 
+                               class="text-decoration-none">
+                                <div class="d-flex align-items-center p-3 border rounded hover-shadow transition">
+                                    <!-- 프로필 이미지 -->
+                                    <div class="flex-shrink-0">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" 
+                                             style="width: 48px; height: 48px;">
+                                            <i class="fas fa-user text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <!-- 사용자 정보 -->
+                                    <div class="ms-3">
+                                        <h6 class="mb-1 text-dark">{{ username }}</h6>
+                                        <small class="text-muted">프로필 보기</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+
+    {% if search_results %}
+        {% for category, results in search_results.items %}
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{{ category.name }}</h5>
+                    {% if results.total_count > 5 %}
+                        <a href="{% url 'board:category_search_results' category.slug %}?q={{ query }}" 
+                           class="btn btn-outline-primary btn-sm">
+                            더보기 ({{ results.total_count }}개)
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% for question in results.top_results %}
+                        <div class="mb-3">
+                            <h6>
+                                <a href="{% url 'board:detail' question.id %}">{{ question.subject }}</a>
+                            </h6>
+                            <p class="mb-1 text-muted">{{ question.content|striptags|truncatechars:100 }}</p>
+                            <small class="text-muted">
+                                {{ question.author.username }} | 
+                                {{ question.create_date|date:"Y.m.d" }} | 
+                                답변 {{ question.answer_set.count }}
+                            </small>
+                        </div>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if query %}
+            <div class="alert alert-info">
+                검색 결과가 없습니다.
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+<style>
+    
+    /* 전체 컨테이너 스타일 */
+    .container {
+        max-width: 1140px;
+    }
+
+    /* 검색 결과 제목 스타일 */
+    h2 {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f0f2f5;
+    }
+
+    /* 카드 공통 스타일 */
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        background: #fff;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding: 1rem 1.25rem;
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* 사용자 카드 스타일 */
+    .user-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .user-card .border {
+        border-radius: 8px;
+        border-color: #e9ecef !important;
+    }
+
+    .user-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .user-card:hover .border {
+        border-color: #dee2e6 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* 검색 결과 항목 스타일 */
+    .mb-3 h6 {
+        margin-bottom: 0.5rem;
+    }
+
+    .mb-3 h6 a {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+
+    }
+
+    .mb-3 h6 a:hover {
+        color: #0d6efd;
+    }
+
+    /* 구분선 스타일 */
+    hr {
+        margin: 1rem 0;
+        border-color: #f0f2f5;
+        opacity: 0.8;
+    }
+
+    /* 더보기 버튼 스타일 */
+    .btn-outline-primary {
+        border-radius: 6px;
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+        border-color: #e9ecef;
+        color: #0d6efd;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .card-header {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        .mb-3 h6 {
+            font-size: 1rem;
+        }
+
+        .text-muted {
+            font-size: 0.8rem;
+        }
+
+        .row {
+            margin-right: -0.5rem;
+            margin-left: -0.5rem;
+        }
+
+        .col {
+            padding-right: 0.5rem;
+            padding-left: 0.5rem;
+        }
+    }
+
+    /* 검색 결과 없음 알림 스타일 */
+    .alert-info {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        color: #495057;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+    }
+
+    /* 프로필 아이콘 컨테이너 */
+    .rounded-circle {
+        background-color: #e7f1ff !important;
+    }
+
+    /* 마지막 카드의 마진 제거 */
+    .card:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+{% endblock %}

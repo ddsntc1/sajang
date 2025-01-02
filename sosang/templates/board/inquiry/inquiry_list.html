@@ -1,0 +1,179 @@
+<!-- templates/inquiry/inquiry_list.html -->
+{% extends "base.html" %}
+{% load board_filter %}
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-between mb-4">
+        <div class="col">
+            <h2>문의 내역</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'board:inquiry_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>문의하기
+            </a>
+        </div>
+    </div>
+
+    <div class="inquiry-list">
+        {% for inquiry in inquiries %}
+        <a href="{% url 'board:inquiry_detail' inquiry.id %}" class="inquiry-item">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="inquiry-content">
+                            <h5 class="card-title">{{ inquiry.subject }}</h5>
+                            <p class="card-text text-muted">{{ inquiry.content|truncatechars:100|mark }}</p>
+                        </div>
+                        {% if inquiry.is_answered %}
+                        <span class="badge bg-success status-badge">답변완료</span>
+                        {% else %}
+                        <span class="badge bg-secondary status-badge">답변대기</span>
+                        {% endif %}
+                    </div>
+                    <div class="inquiry-meta">
+                        <span class="author">{{ inquiry.author.username }}</span>
+                        <span class="date">{{ inquiry.created_at|date:"Y.m.d" }}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="bi bi-inbox text-muted mb-3" style="font-size: 2rem;"></i>
+            <p>등록된 문의가 없습니다.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* 컨테이너 스타일 */
+    .container h2 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+
+    /* 문의하기 버튼 */
+    .btn-primary {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    /* 문의 리스트 스타일 */
+    .inquiry-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .inquiry-item {
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s ease;
+    }
+
+    .inquiry-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .inquiry-item:hover .card {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .card-text {
+        font-size: 0.95rem;
+        color: #6c757d;
+        margin-bottom: 0.75rem;
+    }
+
+    /* 상태 뱃지 */
+    .status-badge {
+        padding: 0.5em 1em;
+        font-weight: normal;
+        font-size: 0.8rem;
+        border-radius: 20px;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+
+    /* 메타 정보 */
+    .inquiry-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+
+    .author {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    /* 빈 상태 */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        color: #6c757d;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .container {
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.4em 0.8em;
+            font-size: 0.75rem;
+        }
+
+        .inquiry-meta {
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

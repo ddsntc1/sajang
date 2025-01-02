@@ -1,0 +1,47 @@
+<!-- templates/board/inquiry_comment_form.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <h5 class="my-3 border-bottom pb-2">답변 수정</h5>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.media }}
+        
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            {% for field in form %}
+                {% if field.errors %}
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-group mb-3">
+            {{ form.content }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">수정완료</button>
+        <a href="{% url 'board:inquiry_detail' inquiry.id %}" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+    $('#content').summernote({
+        height: 300,
+        maxFileSize: 5 * 1024 * 1024,
+        callbacks: {
+            onImageUploadError: function(msg) {
+                if (msg === 'File is too large') {
+                    alert('이미지 크기는 5MB를 초과할 수 없습니다.');
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

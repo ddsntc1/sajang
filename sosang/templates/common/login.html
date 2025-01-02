@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-4">
+            <h4>로그인</h4>
+        </div>
+        <div class="col-8 text-right">
+            <span>또는 <a href="{%url 'common:signup'%}">계정을 만드세요.</a></span>
+        </div>
+    </div>
+
+    <form action="{%url 'common:login'%}" class="post-form" method="post">
+        {% csrf_token %}
+        <!-- 로그인 후 이동되는 URL -->
+        <input type="hidden" name="next" value="{{next}}">
+
+        {% include "form_errors.html" %}
+        <div class="form-group">
+            <label for="username">아이디</label>
+            <input type="text" name="username" id="username" class="form-control" value="{{form.username.value|default_if_none:''}}">
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" name="password" id="password" class="form-control" value="{{form.password.value|default_if_none:''}}">
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+</div>
+<div class="text-center mt-3">
+    <a href="{% url 'common:find_id' %}">아이디 찾기</a> |
+    <a href="{% url 'common:reset_password' %}">비밀번호 찾기</a>
+</div>
+
+
+
+<style>
+    /* 로그인 카드 컨테이너 */
+    .container.my-3 {
+        max-width: 500px;
+        padding: 2rem 1rem;
+    }
+
+    /* 로그인 카드 스타일 */
+    .container.my-3 form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        margin-top: 1.5rem;
+    }
+
+    /* 헤더 영역 스타일 */
+    .row h4 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-right a {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .text-right a:hover {
+        text-decoration: underline;
+    }
+
+    /* 입력 필드 스타일 */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
+    }
+
+    /* 로그인 버튼 스타일 */
+    .btn-primary {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 8px;
+        border: none;
+        margin-top: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13,110,253,0.15);
+    }
+
+    /* 하단 링크 스타일 */
+    .text-center.mt-3 {
+        margin-top: 1.5rem !important;
+    }
+
+    .text-center.mt-3 a {
+        color: #6c757d;
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+        transition: color 0.2s ease;
+    }
+
+    .text-center.mt-3 a:hover {
+        color: #0d6efd;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .container.my-3 {
+            padding: 1rem;
+        }
+
+        .container.my-3 form {
+            padding: 1.5rem;
+        }
+
+        .row {
+            margin-bottom: 1rem;
+        }
+
+        .row h4 {
+            font-size: 1.25rem;
+        }
+
+        .text-right span {
+            font-size: 0.9rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+            padding: 0.625rem 0.875rem;
+        }
+
+        .btn-primary {
+            padding: 0.625rem;
+            font-size: 0.95rem;
+        }
+
+        .text-center.mt-3 {
+            margin-top: 1rem !important;
+        }
+
+        .text-center.mt-3 a {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* 애니메이션 효과 */
+    .container.my-3 form {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

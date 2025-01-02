@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>게시글 관리</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>공지여부</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+            <tr>
+                <td>{{ question.subject }}</td>
+                <td>{{ question.author.username }}</td>
+                <td>{{ question.create_date|date:"Y-m-d" }}</td>
+                <td>{{ question.is_notice|yesno:"공지,일반" }}</td>
+                <td>
+                    <button class="btn btn-info btn-sm" 
+                            onclick="location.href='{% url 'board:toggle_notice' question.id %}'">
+                        {{ question.is_notice|yesno:"공지해제,공지지정" }}
+                    </button>
+                    <button class="btn btn-danger btn-sm" 
+                            onclick="deletePost({{ question.id }})">삭제</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function deletePost(id) {
+    if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+        location.href = '{% url 'board:delete_question' %}' + id;
+    }
+}
+</script>
+{% endblock %}

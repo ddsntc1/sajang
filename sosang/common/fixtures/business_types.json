@@ -1,0 +1,442 @@
+[
+   {
+       "model": "common.businesstype",
+       "pk": 1,
+       "fields": {
+           "name": "개인 카페",
+           "description": "개인이 운영하는 카페",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 2,
+       "fields": {
+           "name": "프렌차이즈 카페",
+           "description": "프렌차이즈 카페 운영",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 3,
+       "fields": {
+           "name": "배달업",
+           "description": "음식 배달 서비스",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 4,
+       "fields": {
+           "name": "요식업",
+           "description": "개인 음식점 운영",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 5,
+       "fields": {
+           "name": "프렌차이즈 요식업",
+           "description": "프렌차이즈 음식점 운영",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 6,
+       "fields": {
+           "name": "기타 요식업",
+           "description": "기타 외식/카페 관련 사업",
+           "category": 4,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 7,
+       "fields": {
+           "name": "스마트 스토어",
+           "description": "온라인 기반의 스마트 스토어 운영",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 8,
+       "fields": {
+           "name": "온라인 쇼핑몰",
+           "description": "자체 온라인 쇼핑몰 운영",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 9,
+       "fields": {
+           "name": "편의점",
+           "description": "편의점 운영",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 10,
+       "fields": {
+           "name": "오프라인 쇼핑몰",
+           "description": "오프라인 매장 운영",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 11,
+       "fields": {
+           "name": "무인판매",
+           "description": "무인 판매점 운영",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 12,    
+       "fields": {
+           "name": "기타 리테일/쇼핑",
+           "description": "기타 리테일/쇼핑 관련 사업",
+           "category": 6,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 13,
+       "fields": {
+           "name": "미용업",
+           "description": "미용실, 네일샵 등 미용 관련 업종",
+           "category": 7,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 14,
+       "fields": {
+           "name": "헬스/피트니스",
+           "description": "헬스장, 피트니스 센터 운영",
+           "category": 7,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 15,
+       "fields": {
+           "name": "레슨",
+           "description": "요가, 필라테스 등 개인 레슨",
+           "category": 7,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 16,
+       "fields": {
+           "name": "기타 뷰티/웰니스",
+           "description": "기타 뷰티/웰니스 관련 사업",
+           "category": 7,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 17,
+       "fields": {
+           "name": "학원",
+           "description": "교육 학원 운영",
+           "category": 8,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 18,
+       "fields": {
+           "name": "교육 사업",
+           "description": "교육 관련 사업 운영",
+           "category": 8,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 19,
+       "fields": {
+           "name": "기타 교육",
+           "description": "기타 교육 관련 사업",
+           "category": 8,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 20,
+       "fields": {
+           "name": "펜션",
+           "description": "펜션 운영",
+           "category": 9,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 21,
+       "fields": {
+           "name": "모텔",
+           "description": "모텔 운영",
+           "category": 9,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 22,
+       "fields": {
+           "name": "글램핑",
+           "description": "글램핑장 운영",
+           "category": 9,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 23,
+       "fields": {
+           "name": "캠핑",
+           "description": "캠핑장 운영",
+           "category": 9,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 24,
+       "fields": {
+           "name": "기타 숙박/레저",
+           "description": "기타 숙박/레저 관련 사업",
+           "category": 9,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 25,
+       "fields": {
+           "name": "반려동물 용품샵",
+           "description": "반려동물 용품 판매",
+           "category": 10,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 26,
+       "fields": {
+           "name": "반려교육업",
+           "description": "반려동물 교육 서비스",
+           "category": 10,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 27,
+       "fields": {
+           "name": "반려동물케어",
+           "description": "반려동물 미용, 호텔링 등 케어 서비스",
+           "category": 10,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 28,
+       "fields": {
+           "name": "기타 반려동물",
+           "description": "기타 반려동물 관련 사업",
+           "category": 10,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 29,
+       "fields": {
+           "name": "제조업",
+           "description": "제품 제조업",
+           "category": 11,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 30,
+       "fields": {
+           "name": "유통업",
+           "description": "상품 유통업",
+           "category": 11,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 31,
+       "fields": {
+           "name": "도매업",
+           "description": "도매업 운영",
+           "category": 11,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 32,
+       "fields": {
+           "name": "기타 제조/유통",
+           "description": "기타 제조/유통 관련 사업",
+           "category": 11,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 33,
+       "fields": {
+           "name": "노점",
+           "description": "노점 판매",
+           "category": 12,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 34,
+       "fields": {
+           "name": "커피트럭",
+           "description": "이동식 커피 판매",
+           "category": 12,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 35,
+       "fields": {
+           "name": "푸드트럭",
+           "description": "이동식 음식 판매",
+           "category": 12,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 36,
+       "fields": {
+           "name": "기타 이동식 판매",
+           "description": "기타 이동식 판매 사업",
+           "category": 12,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 37,
+       "fields": {
+           "name": "스타트업",
+           "description": "스타트업 기업",
+           "category": 13,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 38,
+       "fields": {
+           "name": "전문서비스",
+           "description": "전문 서비스업",
+           "category": 13,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 39,
+       "fields": {
+           "name": "1인기업",
+           "description": "1인 기업 운영",
+           "category": 13,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   },
+   {
+       "model": "common.businesstype",
+       "pk": 40,
+       "fields": {
+           "name": "기타 비즈니스",
+           "description": "기타 비즈니스 관련 사업",
+           "category": 13,
+           "created_at": "2024-12-06T00:00:00Z",
+           "is_active": true
+       }
+   }
+]

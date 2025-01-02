@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">게시글 등록</h5>
+    <form method="post" enctype="multipart/form-data" class="post-form my-3">
+        {% csrf_token %}
+        {{ form.media }}  <!-- Summernote media 추가 -->
+        <!-- 오류표시 start -->
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field in form %}
+                    {% if field.errors %}
+                    <strong>{{ field.label }}</strong>
+                    {{ field.errors }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- 게시판 타입 선택 -->
+        <div class="form-group mb-3">
+            <label for="board_type">게시판 타입</label>
+            <select name="board_type" id="board_type" class="form-control" 
+                    {% if form.instance.id %}disabled{% endif %}>
+                {% if form.instance.id %}
+                    <option value="{{ form.instance.category.type }}">
+                        {% if form.instance.category.type == 'board' %}
+                            일반 게시판
+                        {% elif form.instance.category.type == 'story' %}
+                            이야기 게시판
+                        {% elif form.instance.category.type == 'advertise' %}
+                            광고
+                        {% elif form.instance.category.type == 'info' %}
+                        {% endif %}
+                    </option>
+                {% else %}
+                    <option value="">게시판 타입 선택</option>
+                    <option value="board">일반 게시판</option>
+                    <option value="story">이야기 게시판</option>
+                    {% if user.is_advertise or user.is_admin%}
+                    <option value="advertise">광고</option>
+                    {% if user.is_admin %}
+                    <option value="info">정보</option>
+                    {% endif %}
+                    {% endif %}
+                {% endif %}
+            </select>
+        </div>
+        
+        <!-- 게시판 선택 -->
+        <div class="form-group mb-3">
+            <label for="category">게시판</label>
+            <select name="category" id="category" class="form-control" disabled>
+                {% if form.instance.id %}
+                    <option value="{{ form.instance.category.id }}">{{ form.instance.category.name }}</option>
+                {% else %}
+                    <option value="">게시판을 선택하세요</option>
+                {% endif %}
+            </select>
+            {% if form.instance.id %}
+            <input type="hidden" name="category" value="{{ form.instance.category.id }}">
+            {% endif %}
+        </div>
+
+        <!-- 게시글 제목 -->
+        <div class="form-group mb-3">
+            <label for="subject">제목</label>
+            <input type="text" name="subject" id="subject" class="form-control" 
+                   value="{{form.subject.value|default_if_none:''}}">
+        </div>
+        
+        <!-- 게시글 내용 -->
+        <div class="form-group mb-3">
+            <label for="content">내용</label>
+            {{ form.content }} 
+        </div>
+
+        <div class="form-group mb-3">
+            <small class="text-muted d-block mt-1">이미지 최대 파일 크기: 20MB</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">저장하기</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const boardTypeSelect = document.getElementById('board_type');
+        const categorySelect = document.getElementById('category');
+        
+        // 세션에서 저장된 값 가져오기
+        const lastVisitedType = "{{ request.session.last_visited_type }}";
+        const currentCategory = "{{ request.session.current_category }}";
+        
+        if (lastVisitedType && !boardTypeSelect.disabled) {
+            // 게시판 타입 선택
+            Array.from(boardTypeSelect.options).forEach(option => {
+                if (option.value === lastVisitedType) {
+                    option.selected = true;
+                    // 타입 선택 후 카테고리 로드
+                    fetch(`/board/api/categories/?type=${lastVisitedType}`)
+                        .then(response => response.json())
+                        .then(categories => {
+                            categorySelect.innerHTML = '<option value="">게시판을 선택하세요</option>';
+                            categories.forEach(category => {
+                                const option = document.createElement('option');
+                                option.value = category.id;
+                                option.textContent = category.name;
+                                // slug와 비교하여 선택
+                                if (category.slug === currentCategory) {
+                                    option.selected = true;
+                                }
+                                categorySelect.appendChild(option);
+                            });
+                            categorySelect.disabled = false;
+                        });
+                }
+            });
+        }
+    
+        boardTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            
+            if (!selectedType) {
+                categorySelect.disabled = true;
+                categorySelect.innerHTML = '<option value="">게시판을 선택하세요</option>';
+                return;
+            }
+    
+            fetch(`/board/api/categories/?type=${selectedType}`)
+                .then(response => response.json())
+                .then(categories => {
+                    categorySelect.innerHTML = '<option value="">게시판을 선택하세요</option>';
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                    categorySelect.disabled = false;
+                });
+        });
+    
+        // Summernote 설정 유지
+        $('#content').summernote({
+            height: 1500,
+            maxFileSize: 20 * 1024 * 1024,
+            callbacks: {
+                onImageUploadError: function(msg) {
+                    if (msg === 'File is too large') {
+                        alert('이미지 크기는 20MB를 초과할 수 없습니다.');
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+/* input과 select box 공통 스타일 */
+.form-group select,
+.form-group input[type="text"] {
+   appearance: none;
+   width: 100%;
+   padding: 0.75rem 1rem;
+   font-size: 0.95rem;
+   line-height: 1.5;
+   border: 1px solid #dee2e6;
+   border-radius: 8px;
+   transition: all 0.2s ease;
+}
+
+.form-group select:focus,
+.form-group input[type="text"]:focus {
+   border-color: #ffcc00;
+   box-shadow: 0 0 0 0.25rem rgba(255,204,0,0.15);
+   outline: none;
+}
+
+/* select box 화살표 커스텀 */
+.form-group select {
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+   background-repeat: no-repeat;
+   background-position: right 0.75rem center;
+   background-size: 16px 12px;
+}
+
+/* 비활성화 상태 */
+.form-group select:disabled,
+.form-group input[type="text"]:disabled {
+   background-color: #f8f9fa;
+   cursor: not-allowed;
+}
+
+/* 모바일 대응 */
+@media (max-width: 767.98px) {
+   .form-group select,
+   .form-group input[type="text"] {
+       padding: 0.625rem 0.875rem;
+       font-size: 0.9rem;
+   }
+}
+</style>
+{% endblock %}

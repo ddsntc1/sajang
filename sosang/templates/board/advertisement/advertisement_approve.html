@@ -1,0 +1,79 @@
+<!-- advertisement_approve.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">광고 검토/승인</h5>
+
+    <!-- 게시글 및 광고 정보 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="mb-0">게시글 정보</h6>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ advertisement.question.subject }}</h5>
+            <p class="card-text">{{ advertisement.question.content|safe }}</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="mb-0">광고 정보</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>메인 배너</h6>
+                    {% if advertisement.main_banner %}
+                        <img src="{{ advertisement.main_banner.url }}" class="img-fluid mb-3">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h6>사이드 배너</h6>
+                    {% if advertisement.side_banner %}
+                        <img src="{{ advertisement.side_banner.url }}" class="img-fluid mb-3">
+                    {% endif %}
+                </div>
+            </div>
+            <p><strong>외부 링크:</strong> <a href="{{ advertisement.external_link }}" target="_blank">{{ advertisement.external_link }}</a></p>
+        </div>
+    </div>
+
+    <!-- 승인 관리 폼 -->
+    <form method="post" class="card">
+        {% csrf_token %}
+        <div class="card-body">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="{{ form.status.id_for_label }}">처리 상태</label>
+                {{ form.status }}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.start_date.id_for_label }}">시작일</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.end_date.id_for_label }}">종료일</label>
+                    {{ form.end_date }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.admin_message.id_for_label }}">관리자 메시지</label>
+                {{ form.admin_message }}
+            </div>
+
+            <div class="text-end">
+                <a href="{% url 'board:advertisement_list' %}" class="btn btn-secondary">취소</a>
+                <button type="submit" class="btn btn-primary">저장</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,280 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+    <div class="container">
+        <!-- 브랜드 로고 -->
+        <a href="{% url 'board:index' %}" class="navbar-brand">
+            <img src="{% static 'nado.png' %}" alt="파파이스 로고" height="30">
+        </a>
+
+        <!-- 모바일 메뉴 토글 버튼 -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="메뉴 열기">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- 내비게이션 메뉴 -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <!-- 홈 -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
+                       href="{% url 'board:index' %}">홈</a>
+                </li>
+
+                <!-- 커뮤니티 드롭다운 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="communityDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                    <ul class="dropdown-menu" aria-labelledby="communityDropdown">
+                        {% for category in nonbusiness_categories %}
+                            <li>
+                                <a href="{% url 'board:category_questions' category.slug %}" 
+                                   class="dropdown-item">{{ category.name }}</a>
+                            </li>
+                        {% empty %}
+                            <li><a class="dropdown-item disabled">카테고리가 없습니다</a></li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        {% for category in business_categories %}
+                            <li>
+                                <a href="{% url 'board:category_questions' category.slug %}" 
+                                   class="dropdown-item">{{ category.name }}</a>
+                            </li>
+                        {% empty %}
+                            <li><a class="dropdown-item disabled">카테고리가 없습니다</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <!-- Story 드롭다운 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="storyDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">Story</a>
+                    <ul class="dropdown-menu" aria-labelledby="storyDropdown">
+                        {% for story in story_categories %}
+                            <li>
+                                <a href="{% url 'board:category_questions' story.slug %}" 
+                                   class="dropdown-item">{{ story.name }}</a>
+                            </li>
+                        {% empty %}
+                            <li><a class="dropdown-item disabled">스토리가 없습니다</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">Info</a>
+                    <ul class="dropdown-menu" aria-labelledby="infoDropdown">
+                        {% for info in info_categories %}
+                            <li>
+                                <a href="{% url 'board:category_questions' info.slug %}" 
+                                   class="dropdown-item">{{ info.name }}</a>
+                            </li>
+                        {% empty %}
+                            <li><a class="dropdown-item disabled">정보가 없습니다</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <!-- 문의 드롭다운 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="inquiryDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">문의</a>
+                    <ul class="dropdown-menu" aria-labelledby="inquiryDropdown">
+                        <li><a class="dropdown-item" href="{% url 'board:faq' %}">FAQ</a></li>
+                        <li><a class="dropdown-item" href="{% url 'board:inquiry_list' %}">문의하기</a></li>
+                        {% if user.is_authenticated %}
+                            {% if user.is_admin or user.is_advertise %}           
+                            {% for adv in advertise_categories %}
+                                <li>
+                                    <a href="{% url 'board:category_questions' adv.slug %}" 
+                                       class="dropdown-item">{{ adv.name }}</a>
+                                </li>
+                            {% empty %}
+                                <li><a class="dropdown-item disabled">광고 카테고리가 없습니다</a></li>
+                            {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+
+                <!-- 관리 메뉴 -->
+                {% if user.is_authenticated %}
+                {% if user.is_admin or user.is_advertise %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">관리</a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" href="{% url 'board:advertisement_list' %}">광고 관리</a></li>
+                        {% if user.is_admin %}
+                            <li><a class="dropdown-item" href="{% url 'common:restrict_user' %}">유저 관리</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+
+            <!-- 검색 폼 -->
+            <form class="d-flex me-2" action="{% url 'board:search' %}" method="get">
+                <div class="input-group">
+                    <input class="form-control" type="search" name="q" placeholder="검색어를 입력하세요" 
+                           value="{{ request.GET.q|default:'' }}" aria-label="검색">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- 사용자 메뉴 -->
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i>{{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'common:profile' %}">프로필</a></li>
+                            <li><a class="dropdown-item" href="{% url 'board:message_list' %}">메시지</a></li>
+                            <li><a class="dropdown-item" href="{% url 'board:bookmarked_questions' %}">관심글</a></li>
+                            <li><a class="dropdown-item" href="{% url 'common:my_posts' %}">내가쓴 글</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'common:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">로그아웃</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a href="{% url 'common:login' %}" class="nav-link">
+                            <i class="fas fa-sign-in-alt me-1"></i>로그인
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<style>
+    /* 네비게이션 바 기본 스타일 */
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand img {
+        height: 35px;
+        transition: transform 0.2s ease;
+    }
+    
+    .navbar-brand:hover img {
+        transform: scale(1.05);
+    }
+    
+    /* 드롭다운 메뉴 스타일 개선 */
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(3px);
+    }
+    
+    /* 검색창 스타일 */
+    .form-control {
+        border-radius: 20px 0 0 20px;
+        border-right: none;
+        padding: 0.5rem 1rem;
+    }
+    
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #dee2e6;
+    }
+    
+    .btn-outline-primary {
+        border-radius: 0 20px 20px 0;
+    }
+    
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .navbar {
+            padding: 0.1rem 0.2rem;
+        }
+
+        .navbar-brand img {
+            height: 28px;  /* 로고 크기 축소 */
+        }
+    
+        /* 모바일 토글 버튼 */
+        .navbar-toggler {
+            border: none;
+            padding: 0.3rem;
+        }
+
+        .navbar-toggler-icon {
+            width: 1.2em;
+            height: 1.2em;
+        }
+    
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+    
+        /* 검색창 모바일 스타일 */
+        .d-flex.me-2 {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+    
+        .input-group {
+            width: 100%;
+        }
+    
+        /* 드롭다운 메뉴 모바일 스타일 */
+        .dropdown-menu {
+            box-shadow: none;
+            border: 1px solid #eee;
+            margin-top: 0;
+        }
+    
+        .navbar-nav .dropdown-menu {
+            padding: 0.25rem;
+        }
+    
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+        }
+    
+        /* 사용자 메뉴 모바일 스타일 */
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+        }
+    
+        /* 모바일에서 메뉴 열렸을 때 스타일 */
+        .navbar-collapse {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    }
+    </style>

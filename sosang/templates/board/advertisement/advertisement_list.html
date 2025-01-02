@@ -1,0 +1,199 @@
+<!-- advertisement_list.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <div class="admin-header mb-4">
+        <h2>광고 관리</h2>
+        <p class="text-muted">전체 광고 {{ advertisements|length }}건</p>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table">
+            <thead>
+                <tr>
+                    <th>게시글 정보</th>
+                    <th>광고주</th>
+                    <th>상태</th>
+                    <th>기간</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ad in advertisements %}
+                <tr>
+                    <td class="post-info">
+                        <a href="{% url 'board:detail' question_id=ad.question.id %}" class="post-title">
+                            {{ ad.question.subject }}
+                        </a>
+                        <small class="text-muted d-block">등록일: {{ ad.created_at|date:"Y-m-d" }}</small>
+                    </td>
+                    <td class="align-middle">
+                        <span class="advertiser">{{ ad.question.author.username }}</span>
+                    </td>
+                    <td class="align-middle">
+                        <span class="status-badge status-{{ ad.status }}">
+                            {{ ad.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="align-middle">
+                        {% if ad.start_date and ad.end_date %}
+                            <div class="ad-period">
+                                <div>{{ ad.start_date|date:"Y-m-d" }}</div>
+                                <div class="period-divider">~</div>
+                                <div>{{ ad.end_date|date:"Y-m-d" }}</div>
+                            </div>
+                        {% else %}
+                            <span class="text-muted">미설정</span>
+                        {% endif %}
+                    </td>
+                    <td class="align-middle">
+                        {% if user.is_admin %}
+                            <a href="{% url 'board:advertisement_approve' ad.question.id %}" 
+                               class="btn btn-review">검토/승인</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* 관리자 헤더 스타일 */
+    .admin-header {
+        border-bottom: 2px solid #f0f2f5;
+        padding-bottom: 1rem;
+    }
+
+    .admin-header h2 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* 테이블 스타일 */
+    .admin-table {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .admin-table thead {
+        background-color: #f8f9fa;
+    }
+
+    .admin-table th {
+        padding: 1rem;
+        font-weight: 500;
+        color: #495057;
+        border-bottom: 2px solid #f0f2f5;
+    }
+
+    .admin-table td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    /* 게시글 정보 스타일 */
+    .post-info {
+        min-width: 200px;
+    }
+
+    .post-title {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .post-title:hover {
+        color: #ffcc00;
+    }
+
+    /* 상태 뱃지 스타일 */
+    .status-badge {
+        padding: 0.4em 1em;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: normal;
+    }
+
+    .status-approved {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-rejected {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    /* 광고 기간 스타일 */
+    .ad-period {
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .period-divider {
+        color: #adb5bd;
+        margin: 0.2rem 0;
+    }
+
+    /* 버튼 스타일 */
+    .btn-review {
+        background-color: #fff;
+        border: 1px solid #ffcc00;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-review:hover {
+        background-color: #ffcc00;
+        color: #333;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255,204,0,0.15);
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .admin-table {
+            display: block;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-header h2 {
+            font-size: 1.25rem;
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.3em 0.8em;
+        }
+
+        .btn-review {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        td, th {
+            padding: 0.75rem !important;
+        }
+
+        .ad-period {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}

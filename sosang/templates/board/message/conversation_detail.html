@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                <div class="username-action">
+                    <span>{{ other_user.username }}님과의 대화</span>
+                    <div class="username-dropdown">
+                        <a href="{% url 'common:user_profile' username=other_user.username%}">프로필 보기</a>
+                        {% if user.is_authenticated and user != question.author %}
+                            <a href="#" onclick="showReportDialog('{{ other_user.username }}')">신고하기</a>
+                        {% endif %}
+                    </div>
+                </div>
+                </h5>
+                <a href="{% url 'board:message_list' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> 목록으로
+                </a>
+            </div>
+        </div>
+        
+        <div class="card-body messages-container" style="height: 400px; overflow-y: auto;">
+            {% for message in message_list %}  <!-- messages를 message_list로 변경 -->
+            <div class="message mb-3 {% if message.sender == request.user %}text-end{% endif %}">
+                <div class="message-content d-inline-block p-2 rounded 
+                            {% if message.sender == request.user %}
+                            bg-primary text-white
+                            {% else %}
+                            bg-light
+                            {% endif %}"
+                     style="max-width: 70%;">
+                    {{ message.content|linebreaks }}
+                    <small class="d-block {% if message.sender == request.user %}text-light{% else %}text-muted{% endif %}">
+                        {{ message.created_at|date:"m/d H:i" }}
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card-footer">
+            <form method="post" action="{% url 'board:send_message' %}" class="d-flex gap-2">
+                {% csrf_token %}
+                <input type="hidden" name="receiver" value="{{ other_user.username }}">
+                <input type="text" name="content" class="form-control" 
+                       placeholder="메시지를 입력하세요" required>
+                <button type="submit" class="btn btn-primary">전송</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.messages-container');
+    container.scrollTop = container.scrollHeight;
+});
+</script>
+
+
+
+<style>
+    /* 카드 메인 스타일 */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        background: #fff;
+    }
+
+    /* 헤더 스타일 */
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #f0f2f5;
+        padding: 1rem 1.25rem;
+    }
+
+    .card-header h5 {
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+
+    /* 목록으로 버튼 스타일 */
+    .btn-outline-secondary {
+        border-color: #e9ecef;
+        color: #6c757d;
+        padding: 0.4rem 0.8rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+        transform: translateY(-1px);
+    }
+
+    /* 메시지 컨테이너 스타일 */
+    .messages-container {
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        scrollbar-width: thin;
+        scrollbar-color: #dee2e6 transparent;
+    }
+
+    .messages-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .messages-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb {
+        background-color: #dee2e6;
+        border-radius: 3px;
+    }
+
+    /* 개별 메시지 스타일 */
+    .message {
+        margin-bottom: 1rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .message-content {
+        border-radius: 16px;
+        padding: 0.8rem 1rem !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        word-break: break-word;
+    }
+
+    /* 보낸 메시지 스타일 */
+    .message.text-end .message-content {
+        background-color: #0d6efd !important;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+    }
+
+    /* 받은 메시지 스타일 */
+    .message:not(.text-end) .message-content {
+        background-color: #fff !important;
+        color: #2c3e50 !important;
+        border-bottom-left-radius: 4px;
+    }
+
+    /* 메시지 시간 표시 */
+    .message-content small {
+        font-size: 0.75rem;
+        margin-top: 0.15rem;
+        opacity: 0.8;
+    }
+
+    /* 입력 영역 스타일 */
+    .card-footer {
+        background-color: #fff;
+        border-top: 1px solid #f0f2f5;
+        padding: 1rem;
+    }
+
+    .card-footer .form-control {
+        border: 1px solid #e9ecef;
+        border-radius: 20px;
+        padding: 0.625rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .card-footer .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
+    }
+
+    .card-footer .btn-primary {
+        border-radius: 20px;
+        padding: 0.625rem 1.25rem;
+        font-weight: 500;
+    }
+
+    /* 애니메이션 */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* 유저네임 액션 스타일 */
+    .username-action {
+        position: relative;
+    }
+
+    .username-action span {
+        cursor: pointer;
+        color: #2c3e50;
+    }
+
+    .username-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 1000;
+        min-width: 150px;
+        margin-top: 0.5rem;
+    }
+
+    .username-action:hover .username-dropdown {
+        display: block;
+    }
+
+    .username-dropdown a {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #495057;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .username-dropdown a:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .container {
+            padding: 0.5rem;
+        }
+    
+        .messages-container {
+            height: calc(100vh - 250px) !important;
+            padding: 1rem;
+        }
+    
+        .message-content {
+            max-width: 85% !important;
+            font-size: 0.9rem !important;  /* 메시지 내용 글자 크기 줄임 */
+        }
+    
+        .card-footer .form-control {
+            font-size: 0.9rem;  /* 입력창 글자 크기 줄임 */
+        }
+    
+        /* 시간 표시 글자 크기 줄임 */
+        .message-content small {
+            font-size: 0.75rem;
+            margin-top: 0.1rem;  /* 0.25rem에서 0.15rem으로 줄임 */
+            opacity: 0.8;
+            display: block;
+        }
+    
+        /* 헤더의 사용자 이름 글자 크기 줄임 */
+        .card-header h5 {
+            font-size: 1rem;
+        }
+    
+        /* 드롭다운 메뉴 글자 크기 줄임 */
+        .username-dropdown a {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+    
+</style>
+{% endblock %}

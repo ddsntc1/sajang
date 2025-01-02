@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="restriction-container">
+        <div class="restriction-header">
+            <i class="fas fa-exclamation-circle text-danger mb-3" style="font-size: 3rem;"></i>
+            <h2>계정이 정지되었습니다</h2>
+        </div>
+        
+        <div class="card account-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">계정 정보</h5>
+                <div class="info-item">
+                    <span class="label">사용자 ID</span>
+                    <span class="value">{{ user_id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">사용자명</span>
+                    <span class="value">{{ username }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card restriction-info">
+            <div class="card-body">
+                <h5 class="card-title">제재 정보</h5>
+                <div class="info-item">
+                    <span class="label">정지 사유</span>
+                    <span class="value text-danger">{{ restriction_reason }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">남은 기간</span>
+                    <span class="value">{{ remaining_time }}</span>
+                </div>
+                {% if restrict_end_date %}
+                <div class="info-item">
+                    <span class="label">해제 예정</span>
+                    <span class="value">{{ restrict_end_date|date:"Y년 m월 d일 H시 i분" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="contact-info">
+            <p>
+                문의 사항이 있으시면 관리자에게 연락해주세요.<br>
+                <span class="admin-email">admin@example.com</span>
+            </p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary">홈으로</a>
+            <a href="{% url 'common:login' %}" class="btn btn-primary">로그인</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .restriction-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .restriction-header {
+        margin-bottom: 2rem;
+    }
+
+    .restriction-header h2 {
+        color: #dc3545;
+        font-size: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .value {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .contact-info {
+        color: #6c757d;
+        margin: 2rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .admin-email {
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-primary {
+        background-color: #ffcc00;
+        border-color: #ffcc00;
+        color: #333;
+    }
+
+    .btn-primary:hover {
+        background-color: #e6b800;
+        border-color: #e6b800;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255,204,0,0.15);
+    }
+
+    @media (max-width: 767.98px) {
+        .restriction-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+{% load board_filter %}
+
+{% block main_head %}
+<div class="py-5 text-white" style="background:rgb(245, 183, 129) ;">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-md-9">
+                <h1 class="display-3 fw-bold mb-4">나도사장 커뮤니티</h1>
+                <p class="lead mb-4"><i class="fas fa-users"></i> 자영업, 1인사업, 소상공인, 마케팅 등 사업 운영에 대한 고민을 나누고, 함께 성장하는 공간입니다.</p>
+                <p class="lead mb-4"><i class="fas fa-chart-line"></i> 회원 수 : {{user_count}}</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'board:category_questions' slug='all' %}" class="btn btn-lg btn-warning shadow-lg">전체게시판</a>
+                
+                {% else %}
+                <a href="{% url 'common:login' %}" class="btn btn-lg btn-warning shadow-lg">로그인하기</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock main_head %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Main Hero Poster Section -->
+            {% if hero_advertisement %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card hero-banner bg-light">
+                        <a href="{{ hero_advertisement.external_link }}" target="_blank" class="d-block">
+                            <div class="position-relative hero-container">
+                                <img src="{{ hero_advertisement.main_banner.url }}" 
+                                    class="img-fluid" 
+                                    alt="{{ hero_advertisement.title }}" 
+                                    loading = 'lazy'>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-light text-dark opacity-75">AD</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- Main Banner Advertisement Section -->  
+            {% if main_advertisements %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">📢 배너 광고</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                {% for ad in main_advertisements %}
+                                <div class="col-6">
+                                    <div class="card h-100 shadow-sm banner-card">
+                                        <a href="{{ ad.external_link }}" target="_blank" class="text-decoration-none">
+                                            <div class="position-relative">
+                                                <img src="{{ ad.main_banner.url }}" 
+                                                    class="img-fluid w-100"
+                                                    alt="{{ ad.title }}" 
+                                                    style="object-fit: contain; aspect-ratio: 16 / 9;"
+                                                    loading="lazy">
+                                                <!-- 필요시 contain(안잘림&빈공간) <-> cover(잘림가능 & 꽉참) 변경 -->
+                                                <div class="position-absolute top-0 end-0 p-2">
+                                                    <span class="badge bg-light text-dark opacity-75">AD</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Popular Posts Section -->
+            <div class="row">
+                <!-- Hot Issues/Overall Popular Posts -->
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header text-dark position-relative hot-posts-header">
+                            <h5 class="mb-0 d-flex align-items-center">
+                                <span class="fire-icon me-2">🔥</span>
+                                실시간 인기글
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% for post in hot_posts %}
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="rank-badge me-2">{{ forloop.counter }}</span>
+                                        <a href="{% url 'board:detail' post.id %}" class="post-link">
+                                            {{ post.subject }}
+                                            <small class="like-count ms-2">
+                                                <i class="fas fa-heart"></i> {{ post.up_voter.count }}
+                                            </small>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest News Section -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">📢 정부지원사업 소식</h5>
+                            <a href="{% url 'board:category_questions' 'gov' %}" class="btn btn-sm btn-light">더보기</a>
+                        </div>
+                        <div class="card-body">
+                            {% for news in government_news %}
+                            <div class="col-mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-info me-2">New</span>
+                                    <a href="{% url 'board:detail' news.id %}" class="post-link">
+                                        {{ news.subject }}
+                                        <small class="like-count ms-2">
+                                            <i class="fas fa-heart"></i> {{ news.up_voter.count }}
+                                        </small>
+                                        <em><small class="text-muted ms-4">{{ news.create_date|date:"Y.m.d" }}</small></em>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Trends Section -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">📈 최신 뉴스</h5>
+                            <a href="{% url 'board:category_questions' 'gov' %}" class="btn btn-sm btn-light">더보기</a>
+                        </div>
+                        <div class="card-body">
+                            {% for trend in business_trends %}
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-success me-2">{{ trend.category }}</span>
+                                    <a href="#" class="text-decoration-none">{{ trend.title }}</a>
+                                </div>
+                                <small class="text-muted ms-4">{{ trend.date|date:"Y.m.d" }}</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Advertisement Section -->
+            {% if side_advertisements %}
+            <div class="horizontal-scroll-container mt-4">
+                {% for ad in side_advertisements %}
+                <div class="ad-item">
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <small class="text-muted position-absolute p-2">sponsored</small>
+                            <a href="{% url 'board:detail' question_id=ad.question.id %}" target="_blank" class="d-block">
+                                <img src="{{ ad.side_banner.url }}" 
+                                    alt="{{ ad.question.subject }}" 
+                                    class="ad-image"
+                                    loading="lazy">
+                            </a>
+                        </div>
+                        {% if ad.title %}
+                        <div class="card-footer">
+                            <small>{{ ad.title }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+<style>
+
+.hot-posts-header {
+    background-color: #ffcc00;
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+}
+
+.fire-icon {
+    font-size: 1.2rem;
+}
+
+.rank-badge {
+    background-color: #ffcc00;
+    color: #333;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+    min-width: 24px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.post-link {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-weight: 500;
+}
+
+.post-link:hover {
+    color: #ffcc00;
+}
+
+.like-count {
+    color: #666;
+}
+
+.like-count i {
+    color: #ff4444;
+    font-size: 0.8rem;
+}
+
+.hero-banner {
+    transition: transform 0.2s ease-in-out;
+    height: 800px; /* 고정 높이 설정 */
+    overflow: hidden; /* 내용이 넘치지 않도록 */
+}
+
+.hero-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa; /* 이미지가 채우지 않는 공간의 배경색 */
+}
+
+.hero-container img {
+    max-height: 800px;
+    width: auto;
+    object-fit: contain;
+}
+
+.hero-banner:hover {
+    transform: scale(1.01);
+}
+
+
+@media (max-width: 767px) {
+    .hero-banner {
+        height: auto;
+    }
+ 
+    .hero-container {
+        height: auto;
+    }
+ 
+    .hero-container img {
+        width: 100%;
+        max-height: none;
+        height: auto;
+    }
+    .banner-card img {
+        width: 100%;
+        height: auto;
+        min-height: 100px; /* 최소 높이 설정 */
+        background: white;
+    }
+
+    /* 카드 헤더 폰트 크기 조정 */
+    .card-header h5 {
+        font-size: 1rem;
+    }
+
+    /* 인기글, 소식 폰트 크기 */
+    .post-link {
+        font-size: 0.9rem;
+    }
+
+    .like-count {
+        font-size: 0.75rem;
+    }
+
+    .text-muted {
+        font-size: 0.75rem;
+    }
+ }
+
+ .horizontal-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px; /* 광고 간의 간격 */
+    padding: 8px;
+    scrollbar-width: thin; /* 스크롤바 두께 */
+    -ms-overflow-style: none; /* 스크롤바 제거 (IE/Edge) */
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    height: 6px; /* 스크롤바 높이 */
+    background-color: #f5f5f5; /* 스크롤바 배경색 */
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* 스크롤바 색상 */
+    border-radius: 3px; /* 스크롤바 모서리 */
+}
+
+.ad-item {
+    flex: 0 0 auto; /* 광고 아이템의 크기 고정 */
+    width: 200px; /* 광고 카드의 고정 너비 */
+    height: 200px; /* 광고 카드의 고정 높이 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+    border-radius: 8px; /* 부드러운 모서리 */
+    background-color: #fff; /* 카드 배경색 */
+    overflow: hidden; /* 내용물이 넘치지 않도록 설정 */
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column;
+    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: center; /* 가로 중앙 정렬 */
+}
+
+.ad-item .card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    overflow: hidden; /* 이미지를 감싸는 영역 외부 잘림 */
+}
+.ad-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 이미지가 카드 영역을 완전히 채우도록 설정 */
+    object-position: center; /* 이미지의 중앙 부분을 기준으로 잘림 */
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load board_filter %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">자주 묻는 질문</h2>
+    
+    <div class="accordion custom-accordion">
+        <div class="accordion-item">
+            <input type="radio" id="answer01" name="accordion">
+            <label for="answer01" class="accordion-header">
+                자영업자 커뮤니티는 어떤 곳인가요?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>사장님들의 소통과 정보 공유를 위한 커뮤니티입니다. 자영업, 1인사업, 소상공인, 마케팅 등 사업 운영에 대한 고민을 나누고, 서로의 경험을 공유하며 함께 성장할 수 있는 공간입니다.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer02" name="accordion">
+            <label for="answer02" class="accordion-header">
+                광고는 어떻게 신청하나요?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>추후 광고 서비스 진행 예정이오나 더욱 보장된 서비스를 위해 초기 개발중입니다. 이 외 문의사항 있으실 경우 ddsntc1@naver.com으로 문의 바랍니다.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer03" name="accordion">
+            <label for="answer03" class="accordion-header">
+                게시글이나 댓글을 수정/삭제하고 싶어요
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>본인이 작성한 게시글과 댓글은 언제든지 수정하거나 삭제할 수 있습니다. 게시글 접속 후 내용 하단의 수정/삭제 버튼을 이용해주세요.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer04" name="accordion">
+            <label for="answer04" class="accordion-header">
+                문의사항이 있을 때는 어떻게 하나요?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>상단 메뉴의 '문의하기'를 통해 관리자에게 문의 사항을 전달할 수 있습니다. 이용 중 불편사항이나 타 사용자로 인한 피해, 이외 하고싶은 말씀 모두 편하게 주시면 감사하겠습니다.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer05" name="accordion">
+            <label for="answer05" class="accordion-header">
+                이용 정지 당했어요. 왜 그러죠?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>회원간 갈등, 폭언, 사기 행위, 커뮤니티 이용수칙에 위배되는 행위는 정지사유가 됩니다. 또한 타 사용자에게 일정 횟수 이상 신고당할경우 자동 정지 되오니 참고 바랍니다. 문의사항있으실 경우 ddsntc1@naver.com으로 문의 부탁드립니다.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer06" name="accordion">
+            <label for="answer06" class="accordion-header">
+                메세지 기능은 어떻게 사용하나요?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>상단 '네비게이션 바 > 메세지 > 새 메세지'를 통해 메세지를 보낼 수 있습니다. 또한 타 사용자와 대화를 이어나갈 수 있습니다.</p>
+                <p>다만, 메세지는 최근 sns와 같이 실시간 채팅이 아니므로 새로 접속하거나 새로고침할 경우 상대방의 메세지가 보일 수 있습니다.</p>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <input type="radio" id="answer07" name="accordion">
+            <label for="answer07" class="accordion-header">
+                알림기능은 따로 없나요?
+                <em></em>
+            </label>
+            <div class="accordion-content">
+                <p>현재 기술상의 문제로 알림기능은 따로 제공하지 않으며 추후 기술 개선을 통해 개선하겠습니다. 감사합니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<style>
+.custom-accordion {
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #eee;
+}
+
+input[id*="answer"] {
+    display: none;
+}
+
+.accordion-header {
+    display: block;
+    padding: 20px 25px;
+    background: white;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.accordion-header:hover {
+    background: #f8f9fa;
+}
+
+.accordion-header em {
+    position: absolute;
+    top: 50%;
+    right: 25px;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.accordion-header em::before,
+.accordion-header em::after {
+    content: '';
+    position: absolute;
+    background-color: #333;
+    transition: all 0.3s ease;
+}
+
+.accordion-header em::before {
+    width: 2px;
+    height: 12px;
+    top: 4px;
+    left: 9px;
+}
+
+.accordion-header em::after {
+    width: 12px;
+    height: 2px;
+    top: 9px;
+    left: 4px;
+}
+
+.accordion-content {
+    max-height: 0;
+    padding: 0 25px;
+    background: #fff;
+    transition: all 0.35s ease;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.accordion-content p {
+    padding: 20px 0;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #666;
+}
+
+input[id*="answer"]:checked + .accordion-header {
+    background: #f8f9fa;
+}
+
+input[id*="answer"]:checked + .accordion-header em::before {
+    transform: rotate(90deg);
+    opacity: 0;
+}
+
+input[id*="answer"]:checked + .accordion-header + .accordion-content {
+    max-height: 300px;
+    opacity: 1;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .custom-accordion {
+        margin: 0 15px;
+    }
+    
+    .accordion-header {
+        padding: 15px 20px;
+    }
+    
+    .accordion-content {
+        padding: 0 20px;
+    }
+}
+</style>
+{% endblock %}

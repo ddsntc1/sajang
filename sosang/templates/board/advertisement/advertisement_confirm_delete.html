@@ -1,0 +1,16 @@
+<!-- templates/board/advertisement_confirm_delete.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">광고 삭제</h5>
+    <form method="post">
+        {% csrf_token %}
+        <div class="alert alert-danger" role="alert">
+            정말 이 광고를 삭제하시겠습니까?
+        </div>
+        <button type="submit" class="btn btn-danger">삭제하기</button>
+        <a href="{% url 'board:detail' question_id=advertisement.question.id %}" 
+           class="btn btn-secondary">취소</a>
+    </form>
+</div>
+{% endblock %}

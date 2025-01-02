@@ -1,0 +1,190 @@
+<!-- board/templates/board/category_search_results.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ category.name }} 검색 결과</h2>
+        <div class="text-muted">검색어: "{{ query }}"</div>
+    </div>
+
+    {% for question in questions %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'board:detail' question.id %}">{{ question.subject }}</a>
+                </h5>
+                <p class="card-text">{{ question.content|striptags|truncatechars:200 }}</p>
+                <div class="text-muted">
+                    <small>
+                        작성자: {{ question.author.username }} | 
+                        작성일: {{ question.create_date|date:"Y.m.d H:i" }} | 
+                        답변: {{ question.answer_set.count }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info">
+            검색 결과가 없습니다.
+        </div>
+    {% endfor %}
+
+    {% if questions.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if questions.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ questions.previous_page_number }}">이전</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in questions.paginator.page_range %}
+                    <li class="page-item {% if questions.number == num %}active{% endif %}">
+                        <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if questions.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ questions.next_page_number }}">다음</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
+
+<style>
+    /* 컨테이너 스타일 */
+    .container {
+        max-width: 1140px;
+    }
+
+    /* 헤더 섹션 스타일 */
+    .d-flex.justify-content-between {
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f2f5;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 0;
+    }
+
+    /* 검색어 표시 스타일 */
+    .text-muted {
+        color: #6c757d !important;
+        font-size: 0.95rem;
+    }
+
+    /* 카드 스타일 */
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    /* 카드 제목 스타일 */
+    .card-title {
+        margin-bottom: 0.75rem;
+    }
+
+    .card-title a {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .card-title a:hover {
+        color: #0d6efd;
+    }
+
+    /* 카드 본문 스타일 */
+    .card-text {
+        color: #495057;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    /* 페이지네이션 스타일 */
+    .pagination {
+        margin-top: 2rem;
+    }
+
+    .page-link {
+        color: #495057;
+        border: 1px solid #dee2e6;
+        padding: 0.5rem 1rem;
+        margin: 0 0.2rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .page-item:not(.active) .page-link:hover {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+        border-color: #dee2e6;
+    }
+
+    /* 검색 결과 없음 알림 스타일 */
+    .alert-info {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        color: #495057;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 767.98px) {
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+        }
+
+        .text-muted small {
+            font-size: 0.8rem;
+        }
+
+        .pagination .page-link {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

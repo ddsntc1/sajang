@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">광고 등록</h5>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">연결된 게시글</h6>
+            <h5 class="card-title">{{ question.subject }}</h5>
+        </div>
+    </div>
+
+
+    <form method="post" enctype="multipart/form-data" class="post-form my-3">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            {% for field in form %}
+                {% if field.errors %}
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-group mb-3">
+            <label for="{{ form.title.id_for_label }}">광고 제목</label>
+            {{ question.subject }}
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="{{ form.content.id_for_label }}">광고 내용</label>
+            {{ question.content|striptags }}
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="{{ form.external_link.id_for_label }}">외부 링크</label>
+            {{ form.external_link }}
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="{{ form.main_banner.id_for_label }}">메인 배너</label>
+            {{ form.main_banner }}
+            <small class="text-muted d-block">권장 크기: 1200x300px</small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="{{ form.side_banner.id_for_label }}">사이드 배너</label>
+            {{ form.side_banner }}
+            <small class="text-muted d-block">권장 크기: 400x300px</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">광고 신청하기</button>
+    </form>
+</div>
+{% endblock %}

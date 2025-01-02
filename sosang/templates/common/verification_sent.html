@@ -1,0 +1,18 @@
+<!-- templates/common/verification_sent.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-3">
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">이메일을 확인해 주세요!</h4>
+        <p>회원가입을 완료하기 위한 인증 링크를 이메일로 발송했습니다.</p>
+        <p>이메일을 확인하고 인증 링크를 클릭하여 가입을 완료해 주세요.</p>
+        <hr>
+        <p class="mb-0">메일이 도착하지 않았다면 스팸 메일함을 확인해 주세요.</p>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{% url 'index' %}" class="btn btn-primary">홈으로 돌아가기</a>
+    </div>
+</div>
+{% endblock %}
