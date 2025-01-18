@@ -1,21 +1,9 @@
 from django.shortcuts import render,redirect
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required
-from django.core.mail import EmailMessage,send_mail
-from django.utils import timezone
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.template.loader import render_to_string
-from django.http import JsonResponse
 from django.core.paginator import Paginator
-from datetime import timedelta
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from ..forms import UserUpdateForm,ProfileUpdateForm

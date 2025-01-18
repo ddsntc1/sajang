@@ -1,24 +1,9 @@
-from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q,Count
-from ..models import Question,Category,Advertisement
+from django.db.models import Count
+from ..models import Question,Advertisement
 from django.utils import timezone
 from django.db.models import F
 
-# views.py
-# def index(request):
-#    categories = Category.objects.all()
-#    popular_posts = {}
-   
-#    for category in categories:
-#        posts = Question.objects.filter(
-#            category=category
-#        ).annotate(
-#            voter_count=Count('up_voter')
-#        ).order_by('-voter_count')[:5]
-#        popular_posts[category] = posts
-
-#    return render(request, 'board/main.html', {'popular_posts': popular_posts})
 
 def index(request):
     now = timezone.now()

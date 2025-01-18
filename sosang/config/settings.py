@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-tzkx2(=5nbjzayj+j8afr&=&eqbeo@z$4#vlu3j-jakt9ku9#u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -187,3 +188,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+
+# E-Mail 인증보내기
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'jangjae23@gmail.com'    # 발신용 Gmail 주소
+EMAIL_HOST_PASSWORD = 'dviq hyim zkbb ldhw'           # Gmail 앱 비밀번호
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

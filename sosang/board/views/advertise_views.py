@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from ..forms import AdvertisementForm,AdvertisementApprovalForm
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 
 
 @login_required(login_url='common:login')

@@ -26,7 +26,7 @@ def time_since(value):
     # 시간차를 초 단위로 계산
     seconds = diff.total_seconds()
     
-    # 1년 이상인 경우 년/월/일 형식으로 표시
+
     if seconds >= 604800:
         return value.strftime("%Y/%m/%d")
     

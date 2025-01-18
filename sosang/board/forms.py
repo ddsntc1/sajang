@@ -3,7 +3,6 @@ from board.models import Question,Answer,Category,Advertisement,Inquiry,InquiryC
 from django import forms
 from django_summernote.widgets import SummernoteWidget
 from .models import Question
-from django.conf import settings
 
 
 class QuestionForm(forms.ModelForm):

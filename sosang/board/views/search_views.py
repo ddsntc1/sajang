@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.shortcuts import render
 from ..models import Category,Question
 from common.models import CustomUser
-from django.http import JsonResponse
 
 def search(request):
     query = request.GET.get('q', '')

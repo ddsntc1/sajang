@@ -1,7 +1,5 @@
 
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from django.urls import path
 
 from .views import base_views,question_views,answer_views,vote_views,category_views,bookmark_views,message_views,search_views,advertise_views,inquiry_views
 
