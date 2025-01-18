@@ -21,7 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tzkx2(=5nbjzayj+j8afr&=&eqbeo@z$4#vlu3j-jakt9ku9#u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -65,9 +64,7 @@ MIDDLEWARE = [
 ]
 
 # 임시로 해놓자
-CSRF_TRUSTED_ORIGINS = [
-    'https://ab14-124-56-145-40.ngrok-free.app'
-]
+CSRF_TRUSTED_ORIGINS = []
 
 ROOT_URLCONF = 'config.urls'
 
@@ -97,20 +94,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nado',
-        'USER' : 'dongwooks',
-        'PASSWORD' : 'dongwooks',
-        'HOST' : 'localhost',
-        'PORT' : '3306',
-        'OPTIONS' : {
-            'init_command' : "SET sql_mode = 'STRICT_TRANS_TABLES'",
-            'charset' : 'utf8mb4',
-        }
-    }
-}
+
 
 
 # Password validation
@@ -188,13 +172,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-
-# E-Mail 인증보내기
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'jangjae23@gmail.com'    # 발신용 Gmail 주소
-EMAIL_HOST_PASSWORD = 'dviq hyim zkbb ldhw'           # Gmail 앱 비밀번호
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
