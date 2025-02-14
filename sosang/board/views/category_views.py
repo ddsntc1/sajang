@@ -85,7 +85,6 @@ def category_questions(request, slug):
 
     return render(request, 'board/question_list.html', context)
 
-# views.py
 def get_categories_by_type(request):
     board_type = request.GET.get('type', '')
     

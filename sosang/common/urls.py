@@ -1,7 +1,6 @@
 from django.urls import path
-# from django.contrib.auth import views as auth_views -> auth_views.LoginView.as_view(template_name = 'common/login.html')
 from django.contrib.auth import views as av
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from .views import base_views,find_views,profile_views,admin_views,auth_views,report_views
 
 app_name = 'common'

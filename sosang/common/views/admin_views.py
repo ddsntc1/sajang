@@ -1,16 +1,13 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import get_object_or_404,render,redirect
+from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from board.models import Question
 from django.utils import timezone
 from datetime import timedelta
-from django.utils.timezone import now
 from ..models import CustomUser,UserRestrictionHistory,AdvertiserHistory
 from django.db import transaction
-
-from django.views.decorators.csrf import csrf_exempt
 
 def is_admin(user):
     return user.is_authenticated and (user.is_admin or user.is_superuser)

@@ -6,7 +6,6 @@ from django.shortcuts import get_object_or_404, redirect
 from ..models import Question,Answer
 
 # 게시글 추천 비추천 기능
-
 @login_required(login_url='common:login')
 def upvote_question(request,question_id):
     question = get_object_or_404(Question,pk=question_id)

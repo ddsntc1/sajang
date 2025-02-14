@@ -6,8 +6,8 @@ from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from ..models import UserRestrictionHistory
-from django.utils import timezone
-from django.utils.timezone import datetime
+
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -23,7 +23,7 @@ def login_view(request):
                         unrestricted_at__isnull=True
                     ).order_by('-restricted_at').first()
                 
-                # 정지 기한이 지난경우 -> 정지 해제제
+                # 정지 기한이 지난경우 -> 정지 해제
                 if user.restrict_end_date and user.restrict_end_date <= now():
                     # 정지 해제 처리
                     user.is_restricted = False
