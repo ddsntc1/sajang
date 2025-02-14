@@ -12,20 +12,24 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(os.path.join(BASE_DIR.parent, 'secure', '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG','False') == 'True'
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','nadosajang.com','www.nadosajang.com']
 
 
 # Application definition
@@ -40,7 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_summernote',
+    'django.contrib.sites',    
+    'django.contrib.sitemaps',
 ]
+
+#sitemap set
+SITE_ID = 1 
 
 
 ASGI_APPLICATION = 'config.asgi.application'
@@ -64,7 +73,12 @@ MIDDLEWARE = [
 ]
 
 # 임시로 해놓자
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    'https://nadosajang.com',
+    'https://www.nadosajang.com',
+    'https://localhost',
+    'http://ads-partners.coupang.com/'
+]
 
 ROOT_URLCONF = 'config.urls'
 
@@ -94,7 +108,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS' : {
+            'init_command' : "SET sql_mode = 'STRICT_TRANS_TABLES'",
+            'charset' : 'utf8mb4',
+        }
+    }
+}
 
 
 # Password validation
@@ -132,13 +159,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static/'
 ]
+STATIC_ROOT = '/var/www/nadostatic'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = '/var/www/nadofiles'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN' 
 
@@ -150,7 +178,7 @@ SUMMERNOTE_CONFIG = {
         'width': '100%',
         'height': '480',
         'toolbar': [
-            ['style', ['style']],
+            ['style', ['style','blockquote']],
             ['font', ['bold', 'underline', 'clear']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
@@ -158,9 +186,10 @@ SUMMERNOTE_CONFIG = {
             ['insert', ['link', 'picture']],
             ['view', ['fullscreen', 'codeview', 'help']],
         ],
+        
     },
     'upload_to': 'summernote/',  # 추가
-    'file_upload_max_size': 20 * 1024 * 1024,  # 20MB로 설정
+    'file_filesize_limit': 20 * 1024 * 1024,  # 20MB로 설정
 }
 
 
@@ -172,3 +201,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+
+# E-Mail 인증보내기
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# Nginx static serving
+USE_X_FORWARDED_HOST = True
+FORCE_SCRIPT_NAME = ''
