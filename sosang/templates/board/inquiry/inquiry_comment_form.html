@@ -33,11 +33,11 @@
 $(document).ready(function() {
     $('#content').summernote({
         height: 300,
-        maxFileSize: 5 * 1024 * 1024,
+        maxFileSize: 20 * 1024 * 1024,
         callbacks: {
             onImageUploadError: function(msg) {
                 if (msg === 'File is too large') {
-                    alert('이미지 크기는 5MB를 초과할 수 없습니다.');
+                    alert('이미지 크기는 20MB를 초과할 수 없습니다.');
                 }
             }
         }
