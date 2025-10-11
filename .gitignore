@@ -10,3 +10,4 @@ secure/.env
 *.pyzwz
 *.pyzwzw
 *.pyzwzwz
+.mysql-data/
