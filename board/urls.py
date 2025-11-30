@@ -16,13 +16,14 @@ urlpatterns = [
     path('using_rule/',base_views.using_rule,name='using_rule'),
     
     #category_views.py
-    path('category/<str:slug>',category_views.category_questions, name = 'category_questions'),
+    path('category/<str:slug>/',category_views.category_questions, name = 'category_questions'),
     path('api/categories/', category_views.get_categories_by_type, name='get_categories_by_type'),
     
     # question_views.py
     path('question/create/', question_views.question_create,name='question_create'),
     path('question/modify/<int:question_id>/',question_views.question_modify,name='question_modify'),
     path('question/delete/<int:question_id>/',question_views.question_delete,name='question_delete'),
+    path('question/notice/<int:question_id>/', question_views.toggle_notice, name='toggle_notice'),
     
     path('advertisement/create/<int:question_id>', advertise_views.advertisement_create, name='advertisement_create'),
     path('advertisement/list/', advertise_views.advertisement_list, name='advertisement_list'),

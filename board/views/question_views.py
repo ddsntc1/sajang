@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -91,4 +92,19 @@ def question_delete(request,question_id):
         return redirect('board:detail',question_id = question.id)
     question.delete()
     return redirect('board:category_questions',slug = category.slug)
+
+
+@login_required(login_url='common:login')
+def toggle_notice(request, question_id):
+    """게시글 공지 설정 토글"""
+    if not request.user.is_staff:
+        return JsonResponse({'status': 'error', 'message': '권한이 없습니다.'}, status=403)
+        
+    if request.method == 'POST':
+        question = get_object_or_404(Question, pk=question_id)
+        question.is_notice = not question.is_notice
+        question.save()
+        return JsonResponse({'status': 'success', 'is_notice': question.is_notice})
+    
+    return JsonResponse({'status': 'error', 'message': '잘못된 요청입니다.'}, status=400)
 

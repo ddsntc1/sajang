@@ -1,35 +1,37 @@
-<!-- board/templates/board/message_detail.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="container my-4">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    {% if request.user == message.receiver %}
-                        보낸사람: {{ message.sender.username }}
-                    {% else %}
-                        받는사람: {{ message.receiver.username }}
-                    {% endif %}
-                </h5>
-                <small class="text-muted">{{ message.created_at|date:"Y.m.d H:i" }}</small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="message-content mb-4">
-                {{ message.content|linebreaks }}
-            </div>
-            
-            <div class="d-flex justify-content-between">
-                <a href="{% url 'board:message_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> 목록으로
-                </a>
-                {% if request.user == message.receiver %}
-                    <a href="{% url 'board:send_message' %}?reply_to={{ message.sender.username }}" 
-                       class="btn btn-primary">
-                        <i class="bi bi-reply"></i> 답장하기
-                    </a>
-                {% endif %}
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        {% if request.user == message.receiver %}
+                            <span class="text-muted small me-2">From.</span>{{ message.sender.username }}
+                        {% else %}
+                            <span class="text-muted small me-2">To.</span>{{ message.receiver.username }}
+                        {% endif %}
+                    </h5>
+                    <small class="text-muted">{{ message.created_at|date:"Y.m.d H:i" }}</small>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="message-content mb-5 p-3 bg-light rounded-3">
+                        {{ message.content|linebreaks }}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'board:message_list' %}" class="btn btn-outline-custom">
+                            <i class="bi bi-arrow-left me-1"></i>목록으로
+                        </a>
+                        {% if request.user == message.receiver %}
+                            <a href="{% url 'board:send_message' %}?reply_to={{ message.sender.username }}" 
+                               class="btn btn-primary-custom">
+                                <i class="bi bi-reply-fill me-1"></i>답장하기
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

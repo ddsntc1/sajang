@@ -1,77 +1,108 @@
-<!-- board/templates/board/send_message.html -->
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<!-- HTML 수정 부분 -->
-<div class="container my-4">
-    <div class="card">
-        <div class="card-header bg-light">
-            <h2 class="card-title mb-0">새 쪽지 작성</h2>
-        </div>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group mb-4">
-                    <label for="receiver" class="form-label">받는 사람</label>
-                    <div class="input-group">
-                        <input type="text" name="receiver" id="receiver" 
-                               class="form-control" 
-                               value="{% if initial_receiver %}{{ initial_receiver.username }}{% endif %}" 
-                               {% if initial_receiver %}readonly{% endif %}
-                               placeholder="받는 사람의 아이디를 입력하세요">
-                        {% if initial_receiver %}
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        {% endif %}
-                    </div>
-                    <div id="searchResults" class="list-group mt-2"></div>
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center">
+                        <i class="bi bi-pencil-square me-2 text-primary"></i>새 쪽지 작성
+                    </h5>
                 </div>
-                <div class="form-group mb-4">
-                    <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" id="content" name="content" 
-                              rows="5" required 
-                              placeholder="메시지 내용을 입력하세요"></textarea>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Receiver Input -->
+                        <div class="mb-4">
+                            <label for="receiver" class="form-label fw-bold small text-muted">받는 사람</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input type="text" name="receiver" id="receiver" 
+                                       class="form-control form-control-custom border-start-0 ps-0" 
+                                       value="{% if initial_receiver %}{{ initial_receiver.username }}{% endif %}" 
+                                       {% if initial_receiver %}readonly{% endif %}
+                                       placeholder="아이디를 입력하세요" autocomplete="off">
+                                {% if initial_receiver %}
+                                <span class="input-group-text bg-light border-start-0">
+                                    <i class="bi bi-lock-fill text-muted"></i>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div id="searchResults" class="list-group mt-1 shadow-sm position-absolute w-100" style="z-index: 1000; max-width: calc(100% - 3rem);"></div>
+                        </div>
+
+                        <!-- Content Input -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label fw-bold small text-muted">내용</label>
+                            <textarea class="form-control form-control-custom" id="content" name="content" 
+                                      rows="8" required 
+                                      placeholder="보내실 메시지 내용을 입력해주세요."></textarea>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2 pt-2">
+                            <a href="{% url 'board:message_list' %}" class="btn btn-outline-custom flex-grow-1">취소</a>
+                            <button type="submit" class="btn btn-primary-custom flex-grow-1">
+                                <i class="bi bi-send me-1"></i>보내기
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> 보내기</button>
-                    <a href="{% url 'board:message_list' %}" class="btn btn-outline-secondary">취소</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
-
-
 {% endblock %}
 
 {% block script %}
 <script>
-    // calude 도움받아서 작성
 let searchTimeout = null;
+const receiverInput = document.getElementById('receiver');
+const searchResults = document.getElementById('searchResults');
 
-document.getElementById('receiver').addEventListener('input', function() {
-    clearTimeout(searchTimeout);
-    const query = this.value.trim();
-    
-    searchTimeout = setTimeout(() => {
-        if (query.length >= 2) {
+if (receiverInput && !receiverInput.readOnly) {
+    receiverInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
             fetch(`/board/api/search-users/?q=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(users => {
-                    const resultsDiv = document.getElementById('searchResults');
-                    resultsDiv.innerHTML = '';
-                    users.forEach(user => {
-                        const button = document.createElement('button');
-                        button.className = 'list-group-item list-group-item-action';
-                        button.textContent = user.username;
-                        button.onclick = function(e) {
-                            e.preventDefault();
-                            document.getElementById('receiver').value = user.username;
-                            resultsDiv.innerHTML = '';
-                        };
-                        resultsDiv.appendChild(button);
-                    });
+                    searchResults.innerHTML = '';
+                    if (users.length > 0) {
+                        users.forEach(user => {
+                            const button = document.createElement('button');
+                            button.className = 'list-group-item list-group-item-action border-0 px-3 py-2';
+                            button.innerHTML = `<div class="d-flex align-items-center"><div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;"><i class="bi bi-person-fill text-secondary" style="font-size: 0.8rem;"></i></div><span>${user.username}</span></div>`;
+                            button.onclick = function(e) {
+                                e.preventDefault();
+                                receiverInput.value = user.username;
+                                searchResults.innerHTML = '';
+                            };
+                            searchResults.appendChild(button);
+                        });
+                    }
                 });
+        }, 300);
+    });
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target !== receiverInput && !searchResults.contains(e.target)) {
+            searchResults.innerHTML = '';
         }
-    }, 300);
-});
+    });
+}
 </script>
 {% endblock %}

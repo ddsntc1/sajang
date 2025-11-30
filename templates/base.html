@@ -1,20 +1,27 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko" class="h-100">
+
 <head>
     <!-- Meta Tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="자영업자 커뮤니티">
+    <meta name="description" content="자영업자 커뮤니티 - 나도사장">
     <meta name="author" content="dongwooks">
-    
-    <title>{% block title %}자영업자 커뮤니티{% endblock %}</title>
+
+    <title>{% block title %}나도사장 커뮤니티{% endblock %}</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- CSS Dependencies -->
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap 5 (Keep for grid system mostly, but override styles) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,21 +31,21 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    
+
     <!-- JavaScript Dependencies - Header -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 bg-light">
     <!-- Navigation -->
     {% include "navbar.html" %}
 
     <!-- Alert Messages -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="container-custom mt-3">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -52,36 +59,21 @@
     <!-- Breadcrumb Navigation -->
     {% block breadcrumb %}
     {% if request.resolver_match.url_name == 'detail' %}
-    <div class="container mt-3">
-        <nav aria-label="navigation">
-            <div class="d-flex align-items-center">
-                <a href="/board/category/{{ request.session.current_category|default:'all' }}?kw={{ request.session.last_keyword|default:''}}&page={{ request.session.last_page|default:'1' }}&so={{ request.session.last_sort|default:'recent' }}#question_{{ question.id }}"
-                   class="btn btn-outline-secondary btn-sm"
-                   onclick="sessionStorage.setItem('lastViewedQuestion', '{{ question.id }}')">
-                    <i class="fas fa-arrow-left me-1"></i>목록으로
-                </a>
-                <span class="ms-2 text-muted">
-                    {% if question.category %}
-                        {{ question.category.name }}
-                    {% endif %}
-                </span>
-            </div>
-        </nav>
-    </div>
+    <!-- Breadcrumb removed as per user request -->
     {% endif %}
     {% endblock %}
 
     <!-- Main Content -->
-    <main class="flex-shrink-0">
-        <div class="container-fluid">
-            <div class="row">
+    <main class="flex-shrink-0 my-4">
+        <div class="container-custom">
+            <div class="row g-4">
                 <!-- Sidebar -->
-                <div class="col-md-3 col-lg-2">
+                <div class="col-lg-2 d-none d-lg-block">
                     {% include "_sidebar.html" %}
-                </div>    
+                </div>
                 <!-- Content Area -->
-                <div class="col-md-9 col-lg-10 main-content">
-                    <div class="container py-4">
+                <div class="col-lg-10">
+                    <div class="main-content">
                         {% block content %}{% endblock %}
                     </div>
                 </div>
@@ -90,13 +82,15 @@
     </main>
 
     <!-- Quick Action Buttons -->
-    <div class="position-fixed bottom-0 end-0 mb-3 me-3">
+    <div class="position-fixed bottom-0 end-0 mb-4 me-4 z-3">
         <div class="d-flex flex-column gap-2">
-            <button class="btn btn-primary rounded-circle p-2" title="최상단으로" id="topBtn">
+            <button class="btn btn-primary-custom rounded-circle p-3 shadow-lg" title="최상단으로" id="topBtn"
+                style="display: none; width: 50px; height: 50px;">
                 <i class="fas fa-arrow-up"></i>
             </button>
             {% if user.is_authenticated %}
-            <button class="btn btn-info rounded-circle p-2" title="글쓰기" id="writeBtn">
+            <button class="btn btn-primary-custom rounded-circle p-3 shadow-lg" title="글쓰기" id="writeBtn"
+                style="width: 50px; height: 50px;">
                 <i class="fas fa-pen"></i>
             </button>
             {% endif %}
@@ -104,32 +98,35 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container">
+    <footer class="footer-custom mt-auto">
+        <div class="container-custom">
             <div class="row">
-                <div class="col-md-4 mb-3">
-                    <h5>About Us</h5>
-                    <p class="text-muted">나도사장 커뮤니티는 다양한 의견을 나누는 공간입니다.</p>
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">나도사장</h5>
+                    <p class="text-muted small">소상공인을 위한 소통과 정보 공유의 장.<br>함께 성장하는 커뮤니티를 만들어갑니다.</p>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'board:using_rule' %}" class="text-muted">이용약관</a></li>
-                        <li><a href="{% url 'board:privacy_law' %}" class="text-muted">개인정보처리방침</a></li>
-                        <li><a href="{% url 'board:inquiry_list' %}" class="text-muted">문의하기</a></li>
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{% url 'board:using_rule' %}"
+                                class="text-secondary text-decoration-none">이용약관</a></li>
+                        <li class="mb-2"><a href="{% url 'board:privacy_law' %}"
+                                class="text-secondary text-decoration-none">개인정보처리방침</a></li>
+                        <li class="mb-2"><a href="{% url 'board:inquiry_list' %}"
+                                class="text-secondary text-decoration-none">문의하기</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <h5>Follow Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="text-muted me-2"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-muted me-2"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-muted me-2"><i class="fab fa-instagram"></i></a>
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-secondary fs-5"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-secondary fs-5"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-secondary fs-5"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            <hr>
-            <div class="text-center">
+            <hr class="my-4 text-muted opacity-25">
+            <div class="text-center text-muted small">
                 <p class="mb-0">&copy; {% now "Y" %} 나도사장 커뮤니티. All rights reserved.</p>
             </div>
         </div>
@@ -143,17 +140,19 @@
     <!-- Core Functionality Scripts -->
     <script>
         // Dropdown hover effect
-        $(document).ready(function() {
-            $('.dropdown').hover(
-                function() { $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeIn(200); },
-                function() { $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(200); }
-            );
+        $(document).ready(function () {
+            if (window.matchMedia("(min-width: 992px)").matches) {
+                $('.dropdown').hover(
+                    function () { $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeIn(200); },
+                    function () { $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(200); }
+                );
+            }
         });
 
         // Quick action buttons functionality
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Top button visibility
-            $(window).scroll(function() {
+            $(window).scroll(function () {
                 if ($(this).scrollTop() > 100) {
                     $('#topBtn').fadeIn();
                 } else {
@@ -162,13 +161,13 @@
             });
 
             // Scroll to top
-            $('#topBtn').click(function() {
-                $('html, body').animate({scrollTop: 0}, 100);
+            $('#topBtn').click(function () {
+                $('html, body').animate({ scrollTop: 0 }, 100);
                 return false;
             });
 
             // Write button redirect
-            $('#writeBtn, #recentBtn').click(function() {
+            $('#writeBtn').click(function () {
                 window.location.href = "{% url 'board:question_create' %}";
             });
         });
@@ -176,11 +175,11 @@
 
     <!-- Username Action Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Username dropdown functionality
             const usernames = document.querySelectorAll('.username-action');
             usernames.forEach(wrapper => {
-                wrapper.addEventListener('click', function(e) {
+                wrapper.addEventListener('click', function (e) {
                     if (e.target.tagName === 'A') return;
                     e.preventDefault();
                     const dropdown = this.querySelector('.username-dropdown');
@@ -192,7 +191,7 @@
             });
 
             // Close dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!e.target.closest('.username-action')) {
                     document.querySelectorAll('.username-dropdown.show').forEach(menu => {
                         menu.classList.remove('show');
@@ -225,7 +224,7 @@
                 '5: 기타\n' +
                 '\n숫자를 입력해주세요.'
             );
-        
+
             const categoryMap = {
                 '1': 'HARASSMENT',
                 '2': 'SPAM',
@@ -233,7 +232,7 @@
                 '4': 'HATE_SPEECH',
                 '5': 'OTHER'
             };
-        
+
             if (category && categoryMap[category]) {
                 fetch(`/common/report/user/${username}/`, {
                     method: 'POST',
@@ -245,154 +244,21 @@
                         category: categoryMap[category]
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                })
-                .catch(error => {
-                    alert('신고 처리 중 오류가 발생했습니다.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        alert('신고 처리 중 오류가 발생했습니다.');
+                    });
             } else if (category) {
                 alert('올바른 신고 사유를 선택해주세요.');
             }
         }
     </script>
 
-    <!-- Custom Styles -->
-    <style>
-        /* Base Styles */
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        /* Header Styles */
-        header.navbar {
-            background-color: #fff;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        header .navbar-brand {
-            color: #ffcc00;
-            font-weight: bold;
-        }
-
-        /* Button Styles */
-        .btn-primary {
-            background-color: #ffcc00;
-            border-color: #ffcc00;
-            color: #333;
-        }
-
-        .btn-primary:hover {
-            background-color: #e6b800;
-            border-color: #e6b800;
-        }
-
-        /* Quick Links */
-        .position-fixed .btn {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            background-color: #fafafa;
-            border-right: 1px solid #f0f0f0;
-            padding: 1rem;
-        }
-
-        .sidebar h5 {
-            color: #ffcc00;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-        }
-
-        /* Footer Styles */
-        footer.footer {
-            background-color: #f9f9f9;
-            border-top: 2px solid #f0f0f0;
-            color: #777;
-        }
-
-        footer a {
-            color: #ffcc00;
-        }
-
-        footer a:hover {
-            color: #e6b800;
-        }
-
-        .footer {
-            padding: 1.5rem 0;
-            background-color: #f8f9fa;
-         }
-         
-         .footer h5 {
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
-            color: #2c3e50;
-         }
-         
-         .footer p, .footer a {
-            font-size: 0.85rem;
-            color: #6c757d;
-         }
-         
-         .social-links a {
-            font-size: 1.2rem;
-            transition: color 0.2s ease;
-         }
-         
-         .social-links a:hover {
-            color: #ffcc00 !important;
-         }
-         
-         hr {
-            margin: 0.75rem 0;
-            opacity: 0.1;
-         }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .footer {
-                padding: 0.75rem 0;
-            }
-         
-            .footer h5 {
-                font-size: 0.9rem;
-                margin-bottom: 0.5rem;
-            }
-         
-            .footer p, .footer a {
-                font-size: 0.75rem;
-            }
-         
-            .mb-3 {
-                margin-bottom: 0.5rem !important;
-            }
-         
-            .social-links a {
-                font-size: 1rem;
-            }
-        }
-    </style>
-
     <!-- Additional Scripts -->
     {% block script %}{% endblock %}
 </body>
+
 </html>

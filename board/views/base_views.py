@@ -40,6 +40,7 @@ def index(request):
     ).order_by('-voter_count')[:10]
 
     government_news = Question.objects.filter(category__slug = 'gov').order_by('-create_date')[:5]
+    business_trends = Question.objects.filter(category__slug = 'trend').order_by('-create_date')[:5]
 
     context = {
         'hero_advertisement' : hero_advertisement,
@@ -47,7 +48,9 @@ def index(request):
         'side_advertisements': side_advertisements,
         'hot_posts': hot_posts,
         'government_news' : government_news,
+        'business_trends': business_trends,
     }
+
     return render(request, 'board/main.html', context)
 
 

@@ -163,10 +163,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static/'
 ]
-STATIC_ROOT = '/var/www/nadostatic'
+STATIC_ROOT = './nadostatic'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/var/www/nadofiles'
+MEDIA_ROOT = './nadofiles'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN' 
 

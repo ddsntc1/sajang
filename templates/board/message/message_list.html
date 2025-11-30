@@ -1,45 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container my-4">
+<div class="container-fluid px-0">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>메시지함</h2>
-        <a href="{% url 'board:send_message' %}" class="btn btn-primary">
-            <i class="bi bi-pencil-square"></i> 새 메시지
+        <div>
+            <h2 class="fw-bold mb-1">메시지함</h2>
+            <p class="text-muted small mb-0">주고받은 쪽지 목록입니다.</p>
+        </div>
+        <a href="{% url 'board:send_message' %}" class="btn btn-primary-custom">
+            <i class="bi bi-pencil-square me-2"></i>새 쪽지
         </a>
     </div>
 
-    <div class="conversation-list">
-        {% for conv in conversations %}
-        <a href="{% url 'board:conversation_detail' conv.user.id %}" 
-           class="text-decoration-none">
-            <div class="card mb-2 {% if conv.unread_count %}border-primary{% endif %}">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-1">
+    <!-- Message List -->
+    <div class="card-custom shadow-sm">
+        <div class="list-group list-group-flush">
+            {% for conv in conversations %}
+            <a href="{% url 'board:conversation_detail' conv.user.id %}" class="list-group-item list-group-item-action p-3 border-bottom hover-bg-light transition-base">
+                <div class="d-flex align-items-center">
+                    <!-- User Avatar (Placeholder) -->
+                    <div class="flex-shrink-0 me-3">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center border" style="width: 48px; height: 48px;">
+                            <i class="fas fa-user text-secondary fa-lg"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
                                 {{ conv.user.username }}
                                 {% if conv.unread_count %}
-                                <span class="badge bg-primary">{{ conv.unread_count }}</span>
+                                <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">{{ conv.unread_count }}</span>
                                 {% endif %}
-                            </h5>
-                            <p class="card-text text-muted mb-0">
-                                {{ conv.last_message.content|truncatechars:50 }}
-                            </p>
+                            </h6>
+                            <small class="text-muted" style="font-size: 0.75rem;">{{ conv.last_message.created_at|date:"m.d H:i" }}</small>
                         </div>
-                        <small class="text-muted">
-                            {{ conv.last_message.created_at|date:"m/d H:i" }}
-                        </small>
+                        <p class="mb-0 text-muted text-truncate small {% if conv.unread_count %}fw-medium text-dark{% endif %}">
+                            {{ conv.last_message.content }}
+                        </p>
                     </div>
                 </div>
+            </a>
+            {% empty %}
+            <div class="p-5 text-center text-muted">
+                <i class="bi bi-envelope-open fs-1 mb-3 d-block opacity-50"></i>
+                <p class="mb-0">주고받은 메시지가 없습니다.</p>
             </div>
-        </a>
-        {% empty %}
-        <p class="text-center">메시지가 없습니다.</p>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 
-
-
-
+<style>
+    .hover-bg-light:hover {
+        background-color: var(--bg-surface-hover);
+    }
+</style>
 {% endblock %}

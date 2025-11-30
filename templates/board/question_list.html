@@ -1,306 +1,265 @@
 {% extends "base.html" %}
 {% load board_filter %}
-{% block content %}
+{% load static %}
 
-<div class="container my-3">
-    <div class="row justify-content-between">
-        <div class="col-4">
-            <h2>{{ category.name }}</h2>
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold mb-1">{{ category.name }}</h2>
+            <p class="text-muted small mb-0">게시글을 확인하고 소통하세요</p>
         </div>
+        <a href="{% url 'board:question_create' %}" class="btn btn-primary-custom d-none d-md-inline-flex align-items-center">
+            <i class="fas fa-pen me-2"></i>글쓰기
+        </a>
     </div>
-    <!-- 검색기능 -->
-    <div class="row justify-content-start my-3">  <!-- justify-content-between 대신 end로 변경 -->
-        <!-- 정렬 선택 (드롭다운) -->
-        <div class="col-auto me-2">  <!-- col-2 대신 col-auto와 me-2 사용 -->
-            <select class="form-select so"> 
-                <option value="recent" {% if so == 'recent' %}selected{% endif %}>최신순</option>
-                <option value="recommend" {% if so == 'recommend' %}selected{% endif %}>추천순</option>
-                <option value="popular" {% if so == 'popular' %}selected{% endif %}>인기순</option>
-            </select>
-        </div>
-        <!-- 검색창 -->
-        <div class="col-4">  <!-- input-group으로 감싸진 div 수정 -->
-            <div class="input-group">
-                <input type="text" class="form-control kw" value="{{ kw|default_if_none:'' }}" placeholder="검색어를 입력하세요">
-                <button class="btn btn-outline-secondary" type="button" id="btn_search">
-                    찾기
-                </button>
+
+    <!-- Filter & Search Section -->
+    <div class="card-custom mb-3 p-3 shadow-sm">
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <select class="form-select form-select-sm so" style="min-width: 100px; border-color: var(--border-color);">
+                    <option value="recent" {% if so == 'recent' %}selected{% endif %}>최신순</option>
+                    <option value="recommend" {% if so == 'recommend' %}selected{% endif %}>추천순</option>
+                    <option value="popular" {% if so == 'popular' %}selected{% endif %}>인기순</option>
+                </select>
+            </div>
+            <div class="col"></div>
+            <div class="col-md-4 col-12">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-custom kw"
+                        value="{{ kw|default_if_none:'' }}" placeholder="검색어를 입력하세요">
+                    <button class="btn btn-outline-custom" type="button" id="btn_search">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-    <!-- 검색기능 end -->
-    <div class="d-none d-md-block">
-    <table class="table table-hover question-list">
-        <thead>
-            <tr class="text-center table-dark">
-                <th>번호</th>
-                <th>분류</th>
-                <th>추천</th>
-                <th style="width:40%">제목</th>
-                <th>글쓴이</th>
-                <th>작성일시</th>
-                {% if user.is_admin or user.is_superuser %}
-                <th>관리</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% if question_list %}
-                {% for question in question_list %}
-                {% if question.is_notice %}
-                    <tr class="text-center table-dark" id="question-{{ question.id }}">
-                        <td>공지</td>
-                {% else %}
-                    <tr class="text-center" id="question-{{ question.id }}">
-                        <td>{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}</td>
-                {% endif %}
-                        <td>{{question.category.name}}</td>
-                        <td>
-                            {% if question.up_voter.all.count > 0 %}
-                            <span class="badge bg-warning px-2 py-1">
-                                {{question.up_voter.all.count}}
-                            </span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'board:detail' question.id %}">{{ question.subject }}</a>
-                            {% if question.answer_set.count > 0 %}
-                            <span class="text-danger small ms-2">
-                                댓글 : {{question.answer_set.count}}
-                            </span>
-                            {% endif %}
-                            <span class="text-muted">
-                                <i class="bi bi-eye"></i> {{ question.view_count }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="username-action">
-                                <span>{{ question.author.username }}</span>
-                                <div class="username-dropdown">
-                                    <a href="{% url 'common:user_profile' username=question.author.username %}">프로필 보기</a>
-                                    {% if user.is_authenticated and user != question.author %}
-                                        <a href="{% url 'board:send_message' %}?receiver={{ question.author.username }}">쪽지 보내기</a>
-                                        <a href="#" onclick="showReportDialog('{{ question.author.username }}')">신고하기</a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ question.create_date|time_since }}</td>
-                        {% if user.is_admin or user.is_superuser %}
-                        <td>
-                            <div class="btn-group" role="group">
-                                <!-- 공지 토글 버튼 -->
-                                <button type="button" 
-                                        class="btn btn-sm notice-toggle {% if question.is_notice %}btn-warning{% else %}btn-secondary{% endif %}"
-                                        data-question-id="{{ question.id }}">
-                                    {{ question.is_notice|yesno:"공지해제,공지지정" }}
-                                </button>
-                                <!-- 삭제 버튼 -->
-                                <button type="button" 
-                                        class="btn btn-sm btn-danger delete-post"
-                                        data-question-id="{{ question.id }}">
-                                    삭제
-                                </button>
-                            </div>
-                        </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="{% if user.is_admin or user.is_superuser %}7{% else %}6{% endif %}">
-                        질문이 없습니다.
-                    </td>
-                </tr>
-            {% endif %}
-        </tbody>   
-    </table>
-    </div>
 
-    <div class="d-block d-md-none">
-        {% if question_list %}
+    <!-- Question List -->
+    <div class="card-custom shadow-sm">
+        <!-- List Header (Desktop) -->
+        <div class="d-none d-md-flex p-3 border-bottom text-muted small fw-semibold" style="background-color: var(--bg-surface-hover);">
+            <div class="col-1 text-center">번호</div>
+            <div class="col-6">제목</div>
+            <div class="col-2 text-center">작성자</div>
+            <div class="col-1 text-center">날짜</div>
+            <div class="col-1 text-center">조회</div>
+            <div class="col-1 text-center">추천</div>
+        </div>
+
+        <!-- List Items -->
+        <!-- List Items -->
+        <div class="list-group list-group-flush">
+            {% if question_list %}
             {% for question in question_list %}
-            <div class="card mb-2 {% if question.is_notice %}bg-light{% endif %}">
-                <div class="card-body p-3">
-                    {% if question.is_notice %}
-                    <div class="notice-badge mb-2">
-                        <span class="badge bg-primary">공지</span>
-                    </div>
-                    {% endif %}
-                    
-                    <h6 class="card-title mb-1">
-                        <a href="{% url 'board:detail' question.id %}" class="text-decoration-none">
-                            {{ question.subject }}
-                        </a>
-                    </h6>
-                    
-                    <div class="meta-info d-flex justify-content-between align-items-center mt-2">
-                        <div class="d-flex align-items-center gap-2">
-                            {% if question.up_voter.all.count > 0 %}
-                            <span class="badge bg-warning">
-                                추천 {{question.up_voter.all.count}}
-                            </span>
+            <div class="list-group-item px-3 py-2 border-bottom hover-bg-light transition-base {% if question.is_notice %}bg-light-primary{% endif %}">
+                <div class="row align-items-center g-0">
+                    <!-- Mobile Layout -->
+                    <div class="d-md-none w-100">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="badge badge-custom bg-light text-muted">{{ question.category.name }}</span>
+                            <small class="text-muted" style="font-size: 0.75rem;">{{ question.create_date|time_since }}</small>
+                        </div>
+                        <h6 class="mb-1 text-truncate">
+                            {% if user.is_staff %}
+                            <a href="javascript:void(0);" class="notice-toggle me-1 text-decoration-none" data-question-id="{{ question.id }}" style="z-index: 2; position: relative;">
+                                <i class="bi {% if question.is_notice %}bi-megaphone-fill text-danger{% else %}bi-megaphone text-muted{% endif %}"></i>
+                            </a>
                             {% endif %}
-                            
+                            <a href="{% url 'board:detail' question.id %}" class="text-dark text-decoration-none stretched-link">
+                                {% if question.is_notice %}<span class="badge bg-danger me-1">공지</span>{% endif %}
+                                {{ question.subject }}
+                            </a>
                             {% if question.answer_set.count > 0 %}
-                            <span class="badge bg-danger">
-                                댓글 {{question.answer_set.count}}
-                            </span>
+                            <span class="text-primary small ms-1 fw-bold" style="font-size: 0.75rem;">[{{ question.answer_set.count }}]</span>
                             {% endif %}
-                            
-                            <span class="text-muted small">
-                                <i class="bi bi-eye"></i> {{ question.view_count }}
-                            </span>
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 0.75rem;">
+                            <!-- Mobile User Dropdown -->
+                            <div class="position-relative" style="z-index: 2;"> <!-- z-index to stay above stretched-link -->
+                                <span class="user-dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ question.author.username }}
+                                </span>
+                                <ul class="dropdown-menu shadow-sm border-0 text-small">
+                                    <li><a class="dropdown-item" href="{% url 'common:user_profile' username=question.author.username %}">프로필 보기</a></li>
+                                    {% if user.is_authenticated and user != question.author %}
+                                    <li><a class="dropdown-item" href="{% url 'board:send_message' %}?receiver={{ question.author.username }}">쪽지 보내기</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="showReportDialog('{{ question.author.username }}'); return false;">신고하기</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div>
+                                <span class="me-2"><i class="bi bi-eye me-1"></i>{{ question.view_count }}</span>
+                                <span><i class="bi bi-heart me-1"></i>{{ question.up_voter.all.count }}</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <div class="username-action">
-                            <small>{{ question.author.username }}</small>
+
+                    <!-- Desktop Layout -->
+                    <div class="d-none d-md-flex w-100 align-items-center text-center">
+                        <div class="col-1 text-muted fw-bold" style="font-size: 0.85rem;">
+                            {% if question.is_notice %}
+                            <span class="badge bg-danger">공지</span>
+                            {% else %}
+                            {{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}
+                            {% endif %}
                         </div>
-                        <small class="text-muted">{{ question.create_date|time_since }}</small>
+                        <div class="col-6 text-start ps-2 d-flex align-items-center">
+                            {% if user.is_staff %}
+                            <a href="javascript:void(0);" class="notice-toggle me-2 text-decoration-none" data-question-id="{{ question.id }}">
+                                <i class="bi {% if question.is_notice %}bi-megaphone-fill text-danger{% else %}bi-megaphone text-muted{% endif %}"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'board:detail' question.id %}" class="text-dark text-decoration-none fw-medium text-truncate d-block">
+                                {{ question.subject }}
+                                {% if question.answer_set.count > 0 %}
+                                <span class="text-primary small ms-1 fw-bold" style="font-size: 0.8rem;">[{{ question.answer_set.count }}]</span>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            <!-- Desktop User Dropdown -->
+                            <div class="dropdown">
+                                <span class="user-dropdown-toggle text-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem; cursor: pointer;">
+                                    {{ question.author.username }}
+                                </span>
+                                <ul class="dropdown-menu shadow-sm border-0 text-small">
+                                    <li><a class="dropdown-item" href="{% url 'common:user_profile' username=question.author.username %}">프로필 보기</a></li>
+                                    {% if user.is_authenticated and user != question.author %}
+                                    <li><a class="dropdown-item" href="{% url 'board:send_message' %}?receiver={{ question.author.username }}">쪽지 보내기</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="showReportDialog('{{ question.author.username }}'); return false;">신고하기</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-1 text-muted" style="font-size: 0.8rem;">{{ question.create_date|date:"m.d" }}</div>
+                        <div class="col-1 text-muted" style="font-size: 0.8rem;">{{ question.view_count }}</div>
+                        <div class="col-1 text-muted" style="font-size: 0.8rem;">{{ question.up_voter.all.count }}</div>
                     </div>
                 </div>
             </div>
             {% endfor %}
-        {% else %}
-            <div class="card">
-                <div class="card-body text-center">
-                    질문이 없습니다.
-                </div>
+            {% else %}
+            <div class="p-5 text-center text-muted">
+                <i class="bi bi-inbox fs-1 mb-3 d-block opacity-50"></i>
+                <p class="mb-0">등록된 게시글이 없습니다.</p>
             </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-    <!-- 페이징 처리 시작 -->
-    <ul class="pagination justify-content-center">
-        <!-- 이전페이지 -->
-        {% if question_list.has_previous %}
-        <li class="page-item">
-            <a href="#" data-page="{{question_list.previous_page_number}}" class="page-link">이전</a>
-        </li>
-        {%else%}
-        <li class="page-item disabled">
-            <a href="#" class="page-link" tabindex="-1" aria-disabled="true">이전</a>
-        </li>
-        {% endif %}
 
-        <!-- 처음으로 가는것 만들기 self -->
-        {% if question_list.number > 4 %}
-        <li class="page-item">
-            <a href="?page=1" class="page-link">1</a>
-        </li>
-        <li class="page-item disabled">
-            <a href="#" class="page-link" tabindex="-1" aria-disabled="true">...</a>
-        </li>
-        {% endif %}
-
-
-        <!-- 페이지리스트 -->
-        {% for page_number in question_list.paginator.page_range %}
-        {% if page_number >= question_list.number|add:-3 and page_number <= question_list.number|add:3 %}
-            {% if page_number == question_list.number %}
-            <li class="page-item active" aria-current="page">
-                <a href="#" data-page="{{page_number}}" class="page-link">{{page_number}}</a>
-            </li>
-            {%else%}
+    <!-- Pagination -->
+    <div class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if question_list.has_previous %}
             <li class="page-item">
-                <a href="#" data-page="{{page_number}}" class="page-link">{{page_number}}</a>
+                <a class="page-link border-0 rounded-circle mx-1 d-flex align-items-center justify-content-center"
+                    href="#" data-page="{{question_list.previous_page_number}}" style="width: 36px; height: 36px;">
+                    <i class="fas fa-chevron-left small"></i>
+                </a>
             </li>
             {% endif %}
-        {% endif %}
-        {% endfor %}
 
-        <!-- 마지막페이지 가는것 만들기 self -->
-        {% if question_list.number < max_index|sub:3 %}
-        <li class="page-item disabled">
-            <a href="#" class="page-link" tabindex="-1" aria-disabled="true">...</a>
-        </li>
-        <li class="page-item">
-            <a href="?page={{max_index}}" class="page-link">{{max_index}}</a>
-        </li>
-        {% endif %}
-        
-        <!-- 다음페이지 -->
-        {% if question_list.has_next %}
-        <li class="page-item">
-            <a href="#" data-page="{{question_list.next_page_number}}" class="page-link">다음</a>
-        </li>
-        {%else%}
-        <li class="page-item disabled">
-            <a href="#" tabindex="-1" aria-disabled="true" class="page-link">다음</a>
-        </li>
-          
-        {% endif %}
-    </ul>
-    <a href="{%url 'board:question_create'%}" class="btn btn-primary">글 등록하기</a>
+            {% for page_number in question_list.paginator.page_range %}
+            {% if page_number >= question_list.number|add:-2 and page_number <= question_list.number|add:2 %} <li
+                class="page-item {% if page_number == question_list.number %}active{% endif %}">
+                <a class="page-link border-0 rounded-circle mx-1 d-flex align-items-center justify-content-center {% if page_number == question_list.number %}bg-primary text-white shadow-sm{% else %}text-dark{% endif %}"
+                    href="#" data-page="{{page_number}}" style="width: 36px; height: 36px;">{{page_number}}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if question_list.has_next %}
+                <li class="page-item">
+                    <a class="page-link border-0 rounded-circle mx-1 d-flex align-items-center justify-content-center"
+                        href="#" data-page="{{question_list.next_page_number}}" style="width: 36px; height: 36px;">
+                        <i class="fas fa-chevron-right small"></i>
+                    </a>
+                </li>
+                {% endif %}
+        </ul>
+    </div>
 </div>
 
-<!-- kw(keyword)와 page를 동시에 get할 수 있도록 form 엘리먼트 추가 -->
+<!-- Hidden Form for Search/Sort -->
 <form action="{% url 'board:category_questions' category.slug %}" method="get" id="searchForm">
     <input type="hidden" name="kw" id="kw" value="{{kw|default_if_none:''}}">
     <input type="hidden" id="page" name="page" value="{{page}}">
     <input type="hidden" name="so" id="so" value="{{so}}">
 </form>
 
+<style>
+    .bg-light-primary {
+        background-color: rgba(79, 70, 229, 0.03);
+    }
 
+    .hover-bg-light:hover {
+        background-color: var(--bg-surface-hover);
+    }
+
+    .bg-primary-light {
+        background-color: rgba(79, 70, 229, 0.1);
+    }
+
+    .page-link:focus {
+        box-shadow: none;
+    }
+</style>
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
-$(document).ready(function(){
-    // 기존 페이징/검색 관련 코드
-    $(".page-link").on('click',function(){
-        $("#page").val($(this).data("page"));
-        $("#searchForm").submit();
-    });
-    
-    $("#btn_search").on('click',function(){
-        $("#kw").val($(".kw").val());
-        $("#page").val(1);
-        $("#searchForm").submit();
-    });
+    $(document).ready(function () {
+        $(".page-link").on('click', function () {
+            $("#page").val($(this).data("page"));
+            $("#searchForm").submit();
+        });
 
-    $(".so").on('change',function(){
-        $("#so").val($(this).val());
-        $("#page").val(1);
-        $("#searchForm").submit();
-    });
+        $("#btn_search").on('click', function () {
+            $("#kw").val($(".kw").val());
+            $("#page").val(1);
+            $("#searchForm").submit();
+        });
 
-    // 관리자 기능
-    $('.notice-toggle').on('click', function() {
-        const questionId = $(this).data('questionId');
-        const isNotice = $(this).hasClass('btn-warning');
-        const message = isNotice ? '공지를 해제하시겠습니까?' : '공지로 지정하시겠습니까?';
-        
-        if (confirm(message)) {
+        $(".so").on('change', function () {
+            $("#so").val($(this).val());
+            $("#page").val(1);
+            $("#searchForm").submit();
+        });
+
+        // 공지 토글
+        $(".notice-toggle").on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if(!confirm('공지 설정을 변경하시겠습니까?')) return;
+
+            var $this = $(this);
+            var questionId = $this.data('question-id');
+            
             $.ajax({
-                url: "{% url 'common:toggle_notice' question_id=0 %}".replace('0', questionId),
+                url: '/board/question/notice/' + questionId + '/',
                 type: 'POST',
                 data: {
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
-                success: function() {
-                    location.reload();
-                }
-            });
-        }
-    });
-
-    $('.delete-post').on('click', function() {
-        const questionId = $(this).data('questionId');
-        if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-            $.ajax({
-                url: "{% url 'common:admin_delete' question_id=0 %}".replace('0', questionId),
-                type: 'POST',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                success: function(response) {
+                    if(response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
                 },
-                success: function() {
-                    location.reload();
+                error: function() {
+                    alert('오류가 발생했습니다.');
                 }
             });
-        }
+        });
     });
-});
 </script>
 {% endblock %}

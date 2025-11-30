@@ -11,3 +11,5 @@ secure/.env
 *.pyzwzw
 *.pyzwzwz
 .mysql-data/
+.venv
+nadofiles/
