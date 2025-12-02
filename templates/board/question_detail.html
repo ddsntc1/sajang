@@ -108,46 +108,63 @@
         <div class="card-footer bg-light border-top p-4">
             {% if user.is_admin or user == question.author %}
             {% if question.advertisement %}
-            <h5 class="fw-bold mb-3">광고 관리</h5>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <p class="text-uppercase text-muted small fw-bold mb-1" style="letter-spacing: .08em;">Advertise</p>
+                    <h5 class="fw-bold mb-0">광고 정보</h5>
+                    <p class="text-muted mb-0 small">배너와 링크를 확인하고 필요한 경우 수정/삭제하세요.</p>
+                </div>
+                <span class="status-pill status-{{ question.advertisement.status }}">{{ question.advertisement.get_status_display }}</span>
+            </div>
+
             <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <h6 class="text-muted small fw-bold text-uppercase">메인 배너</h6>
-                        {% if question.advertisement.main_banner %}
-                        <img src="{{ question.advertisement.main_banner.url }}" class="img-fluid rounded shadow-sm"
-                            alt="메인 배너">
-                        {% else %}
-                        <span class="text-muted small">등록된 배너 없음</span>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <h6 class="text-muted small fw-bold text-uppercase">사이드 배너</h6>
-                        {% if question.advertisement.side_banner %}
-                        <img src="{{ question.advertisement.side_banner.url }}" class="img-fluid rounded shadow-sm"
-                            alt="사이드 배너">
-                        {% else %}
-                        <span class="text-muted small">등록된 배너 없음</span>
-                        {% endif %}
+                <div class="col-lg-7">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-2">메인 배너</h6>
+                            {% if question.advertisement.main_banner %}
+                            <div class="ratio ratio-21x9 mb-3">
+                                <img src="{{ question.advertisement.main_banner.url }}" class="img-fluid rounded shadow-sm object-fit-cover" alt="메인 배너">
+                            </div>
+                            {% else %}
+                            <div class="text-center text-muted py-4 border rounded small">등록된 메인 배너 없음</div>
+                            {% endif %}
+
+                            <h6 class="fw-bold mb-2">사이드 배너</h6>
+                            {% if question.advertisement.side_banner %}
+                            <div class="ratio ratio-4x3">
+                                <img src="{{ question.advertisement.side_banner.url }}" class="img-fluid rounded shadow-sm object-fit-cover" alt="사이드 배너">
+                            </div>
+                            {% else %}
+                            <div class="text-center text-muted py-4 border rounded small">등록된 사이드 배너 없음</div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="bg-white p-3 rounded shadow-sm h-100">
-                        <p class="mb-2"><strong>상태:</strong> <span class="badge bg-info">{{
-                                question.advertisement.get_status_display }}</span></p>
-                        {% if question.advertisement.external_link %}
-                        <p class="mb-2"><strong>링크:</strong> <a href="{{ question.advertisement.external_link }}"
-                                target="_blank" class="text-break">{{ question.advertisement.external_link }}</a></p>
-                        {% endif %}
-                        {% if question.advertisement.start_date %}
-                        <p class="mb-3"><strong>기간:</strong> {{ question.advertisement.start_date|date:"Y-m-d" }} ~ {{
-                            question.advertisement.end_date|date:"Y-m-d" }}</p>
-                        {% endif %}
+                <div class="col-lg-5">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <div class="text-muted small fw-semibold mb-1">상태</div>
+                                <span class="status-pill status-{{ question.advertisement.status }}">{{ question.advertisement.get_status_display }}</span>
+                            </div>
+                            {% if question.advertisement.external_link %}
+                            <div class="mb-3">
+                                <div class="text-muted small fw-semibold mb-1">링크</div>
+                                <a href="{{ question.advertisement.external_link }}" target="_blank" class="text-break">{{ question.advertisement.external_link }}</a>
+                            </div>
+                            {% endif %}
+                            {% if question.advertisement.start_date %}
+                            <div class="mb-3">
+                                <div class="text-muted small fw-semibold mb-1">기간</div>
+                                <div>{{ question.advertisement.start_date|date:"Y-m-d" }} ~ {{ question.advertisement.end_date|date:"Y-m-d" }}</div>
+                            </div>
+                            {% endif %}
 
-                        <div class="d-flex gap-2 mt-auto">
-                            <a href="{% url 'board:advertisement_modify' question.id %}"
-                                class="btn btn-outline-primary btn-sm flex-grow-1">수정</a>
-                            <a href="{% url 'board:advertisement_delete' question.id %}"
-                                class="btn btn-outline-danger btn-sm flex-grow-1">삭제</a>
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="{% url 'board:advertisement_modify' question.id %}" class="btn btn-outline-primary btn-sm flex-grow-1">수정</a>
+                                <a href="{% url 'board:advertisement_delete' question.id %}" class="btn btn-outline-danger btn-sm flex-grow-1">삭제</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -284,6 +301,21 @@
         height: auto;
         border-radius: 8px;
     }
+
+    /* Advertisement status pills */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+    .status-pending { background: #fff4e5; color: #c05621; }
+    .status-approved { background: #e3f9e5; color: #0f9d58; }
+    .status-rejected { background: #ffe6e6; color: #d93025; }
+    .status-ended { background: #f1f5f9; color: #475569; }
+    .ratio.ratio-21x9 { --bs-aspect-ratio: calc(100% * 9 / 21); }
 </style>
 {% endblock %}
 
