@@ -77,18 +77,20 @@
                             value="{{form.business_name.value|default_if_none:''}}" placeholder="운영중인 사업장 이름">
                     </div>
 
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" value="on" id="terms_agree" name="terms_agree" {% if form.terms_agree.value %}checked{% endif %} required>
-                        <label class="form-check-label small text-muted" for="terms_agree">
+                    <div class="form-check mb-2 d-flex align-items-start gap-2">
+                        <input class="form-check-input mt-1" type="checkbox" value="on" id="terms_agree" name="terms_agree" {% if form.terms_agree.value %}checked{% endif %} required>
+                        <label class="form-check-label small text-muted flex-grow-1" for="terms_agree">
                             <strong>이용약관</strong>에 동의합니다.
                         </label>
+                        <button type="button" class="btn btn-link p-0 small" data-bs-toggle="modal" data-bs-target="#termsModal">내용 보기</button>
                     </div>
 
-                    <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" value="on" id="privacy_agree" name="privacy_agree" {% if form.privacy_agree.value %}checked{% endif %} required>
-                        <label class="form-check-label small text-muted" for="privacy_agree">
+                    <div class="form-check mb-4 d-flex align-items-start gap-2">
+                        <input class="form-check-input mt-1" type="checkbox" value="on" id="privacy_agree" name="privacy_agree" {% if form.privacy_agree.value %}checked{% endif %} required>
+                        <label class="form-check-label small text-muted flex-grow-1" for="privacy_agree">
                             <strong>개인정보 처리방침</strong>에 동의합니다.
                         </label>
+                        <button type="button" class="btn btn-link p-0 small" data-bs-toggle="modal" data-bs-target="#privacyModal">내용 보기</button>
                     </div>
 
                     <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-3 fw-bold shadow-sm">회원가입
@@ -140,4 +142,33 @@
         box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
     }
 </style>
+<!-- 이용약관/개인정보 처리방침 모달 -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">이용약관</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="termsFrame" src="{% url 'board:using_rule' %}?modal=1" style="border:0; width:100%; height:70vh;"></iframe>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">개인정보 처리방침</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="privacyFrame" src="{% url 'board:privacy_law' %}?modal=1" style="border:0; width:100%; height:70vh;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -85,7 +85,11 @@ def faq(request):
 
 
 def privacy_law(request):
+    if request.GET.get('modal') == '1':
+        return render(request, 'board/partials/privacy_law_modal.html')
     return render(request,'board/privacy-law.html')
 
 def using_rule(request):
+    if request.GET.get('modal') == '1':
+        return render(request, 'board/partials/using_rule_modal.html')
     return render(request,'board/using_rule.html')
