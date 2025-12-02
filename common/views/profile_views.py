@@ -111,4 +111,6 @@ def my_posts(request):
         'page': page,
         'tab': tab,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'common/partials/_my_posts_section.html', context)
     return render(request, 'common/my_posts.html', context)

@@ -10,6 +10,7 @@ services:
     env_file:
       - ./secure/.env
     volumes:
+      - .:/app
       - ./secure:/secure:ro
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 

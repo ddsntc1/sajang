@@ -3,15 +3,31 @@
 {% load static %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center mb-4">자주 묻는 질문</h2>
-    
+<div class="container my-5 faq-page">
+    <div class="faq-hero mb-4">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="badge rounded-pill text-uppercase fw-bold small px-3 py-2 text-primary" style="background-color: var(--primary-soft); letter-spacing: 0.06em;">
+                FAQ
+            </div>
+            <div>
+                <h2 class="fw-bold mb-1">자주 묻는 질문</h2>
+                <p class="mb-0 text-secondary small">자주 들어오는 질문을 모았습니다. 더 궁금한 점은 문의하기로 알려주세요.</p>
+            </div>
+            <div class="ms-auto">
+                <a href="{% url 'board:inquiry_list' %}" class="btn btn-outline-custom btn-sm">문의하기 바로가기</a>
+            </div>
+        </div>
+    </div>
+
     <div class="accordion custom-accordion">
         <div class="accordion-item">
             <input type="radio" id="answer01" name="accordion">
             <label for="answer01" class="accordion-header">
-                자영업자 커뮤니티는 어떤 곳인가요?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q1</span>
+                    <span>자영업자 커뮤니티는 어떤 곳인가요?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>사장님들의 소통과 정보 공유를 위한 커뮤니티입니다. 자영업, 1인사업, 소상공인, 마케팅 등 사업 운영에 대한 고민을 나누고, 서로의 경험을 공유하며 함께 성장할 수 있는 공간입니다.</p>
@@ -21,8 +37,11 @@
         <div class="accordion-item">
             <input type="radio" id="answer02" name="accordion">
             <label for="answer02" class="accordion-header">
-                광고는 어떻게 신청하나요?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q2</span>
+                    <span>광고는 어떻게 신청하나요?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>추후 광고 서비스 진행 예정이오나 더욱 보장된 서비스를 위해 초기 개발중입니다. 이 외 문의사항 있으실 경우 ddsntc1@naver.com으로 문의 바랍니다.</p>
@@ -32,8 +51,11 @@
         <div class="accordion-item">
             <input type="radio" id="answer03" name="accordion">
             <label for="answer03" class="accordion-header">
-                게시글이나 댓글을 수정/삭제하고 싶어요
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q3</span>
+                    <span>게시글이나 댓글을 수정/삭제하고 싶어요</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>본인이 작성한 게시글과 댓글은 언제든지 수정하거나 삭제할 수 있습니다. 게시글 접속 후 내용 하단의 수정/삭제 버튼을 이용해주세요.</p>
@@ -43,8 +65,11 @@
         <div class="accordion-item">
             <input type="radio" id="answer04" name="accordion">
             <label for="answer04" class="accordion-header">
-                문의사항이 있을 때는 어떻게 하나요?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q4</span>
+                    <span>문의사항이 있을 때는 어떻게 하나요?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>상단 메뉴의 '문의하기'를 통해 관리자에게 문의 사항을 전달할 수 있습니다. 이용 중 불편사항이나 타 사용자로 인한 피해, 이외 하고싶은 말씀 모두 편하게 주시면 감사하겠습니다.</p>
@@ -54,8 +79,11 @@
         <div class="accordion-item">
             <input type="radio" id="answer05" name="accordion">
             <label for="answer05" class="accordion-header">
-                이용 정지 당했어요. 왜 그러죠?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q5</span>
+                    <span>이용 정지 당했어요. 왜 그러죠?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>회원간 갈등, 폭언, 사기 행위, 커뮤니티 이용수칙에 위배되는 행위는 정지사유가 됩니다. 또한 타 사용자에게 일정 횟수 이상 신고당할경우 자동 정지 되오니 참고 바랍니다. 문의사항있으실 경우 ddsntc1@naver.com으로 문의 부탁드립니다.</p>
@@ -65,8 +93,11 @@
         <div class="accordion-item">
             <input type="radio" id="answer06" name="accordion">
             <label for="answer06" class="accordion-header">
-                메세지 기능은 어떻게 사용하나요?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q6</span>
+                    <span>메세지 기능은 어떻게 사용하나요?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
                 <p>상단 '네비게이션 바 > 메세지 > 새 메세지'를 통해 메세지를 보낼 수 있습니다. 또한 타 사용자와 대화를 이어나갈 수 있습니다.</p>
@@ -77,11 +108,14 @@
         <div class="accordion-item">
             <input type="radio" id="answer07" name="accordion">
             <label for="answer07" class="accordion-header">
-                알림기능은 따로 없나요?
-                <em></em>
+                <div class="d-flex align-items-start gap-2">
+                    <span class="question-index">Q7</span>
+                    <span>알림기능은 따로 없나요?</span>
+                </div>
+                <em class="chevron"></em>
             </label>
             <div class="accordion-content">
-                <p>현재 기술상의 문제로 알림기능은 따로 제공하지 않으며 추후 기술 개선을 통해 개선하겠습니다. 감사합니다.</p>
+                <p>알림기능은 따로 제공하지 않으며 추후 기술 개선을 통해 개선하겠습니다. 감사합니다.</p>
             </div>
         </div>
     </div>
@@ -90,16 +124,30 @@
 
 {% block script %}
 <style>
+.faq-page {
+    max-width: 900px;
+}
+
+.faq-hero {
+    background: linear-gradient(135deg, #fff8d6, #fff2c2);
+    border: 1px solid #ffe9a8;
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
 .custom-accordion {
     max-width: 800px;
     margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
     overflow: hidden;
 }
 
 .accordion-item {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 input[id*="answer"] {
@@ -108,20 +156,20 @@ input[id*="answer"] {
 
 .accordion-header {
     display: block;
-    padding: 20px 25px;
+    padding: 20px 22px;
     background: white;
-    color: #333;
-    font-weight: 500;
+    color: var(--text-main);
+    font-weight: 600;
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease;
 }
 
 .accordion-header:hover {
-    background: #f8f9fa;
+    background: #f8fafc;
 }
 
-.accordion-header em {
+.accordion-header .chevron {
     position: absolute;
     top: 50%;
     right: 25px;
@@ -136,18 +184,18 @@ input[id*="answer"] {
 .accordion-header em::after {
     content: '';
     position: absolute;
-    background-color: #333;
+    background-color: var(--text-secondary);
     transition: all 0.3s ease;
 }
 
-.accordion-header em::before {
+.accordion-header .chevron::before {
     width: 2px;
     height: 12px;
     top: 4px;
     left: 9px;
 }
 
-.accordion-header em::after {
+.accordion-header .chevron::after {
     width: 12px;
     height: 2px;
     top: 9px;
@@ -164,18 +212,20 @@ input[id*="answer"] {
 }
 
 .accordion-content p {
-    padding: 20px 0;
+    padding: 14px 0 18px;
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 input[id*="answer"]:checked + .accordion-header {
-    background: #f8f9fa;
+    background: #f8fafc;
+    color: var(--text-main);
+    box-shadow: inset 0 1px 0 #e2e8f0;
 }
 
-input[id*="answer"]:checked + .accordion-header em::before {
+input[id*="answer"]:checked + .accordion-header .chevron::before {
     transform: rotate(90deg);
     opacity: 0;
 }
@@ -183,6 +233,20 @@ input[id*="answer"]:checked + .accordion-header em::before {
 input[id*="answer"]:checked + .accordion-header + .accordion-content {
     max-height: 300px;
     opacity: 1;
+    padding-bottom: 6px;
+}
+
+.question-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.75rem;
 }
 
 /* 반응형 디자인 */
@@ -191,6 +255,10 @@ input[id*="answer"]:checked + .accordion-header + .accordion-content {
         margin: 0 15px;
     }
     
+    .faq-hero {
+        padding: 18px;
+    }
+
     .accordion-header {
         padding: 15px 20px;
     }

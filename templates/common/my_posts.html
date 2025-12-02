@@ -4,132 +4,55 @@
 {% block content %}
 <div class="container my-4">
     <h4 class="border-bottom pb-2 mb-4">내 활동</h4>
-    
-    <!-- 탭 메뉴 -->
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <a class="nav-link {% if tab == 'posts' %}active{% endif %}" 
-               href="{% url 'common:my_posts' %}?tab=posts">
-                내가 쓴 글
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {% if tab == 'comments' %}active{% endif %}" 
-               href="{% url 'common:my_posts' %}?tab=comments">
-                댓글 단 글
-            </a>
-        </li>
-    </ul>
-    
-    <!-- PC 화면의 테이블 -->
-    <div class="d-none d-md-block">
-        <div class="card">
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr class="text-center">
-                            <th style="width: 15%">게시판</th>
-                            <th style="width: 45%">제목</th>
-                            <th style="width: 15%">작성자</th>
-                            <th style="width: 15%">작성일</th>
-                            <th style="width: 10%">추천</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% if questions %}
-                        {% for question in questions %}
-                        <tr>
-                            <td class="text-center">{{ question.category.name }}</td>
-                            <td>
-                                <a href="{% url 'board:detail' question.id %}" class="text-decoration-none">
-                                    {{ question.subject }}
-                                    {% if question.answer_set.count > 0 %}
-                                    <span class="text-muted small">[{{ question.answer_set.count }}]</span>
-                                    {% endif %}
-                                </a>
-                            </td>
-                            <td class="text-center">{{ question.author.username }}</td>
-                            <td class="text-center">{{ question.create_date|date:"Y-m-d" }}</td>
-                            <td class="text-center">{{ question.up_voter.count }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center">게시글이 없습니다.</td>
-                        </tr>
-                    {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
-    <!-- 모바일 화면의 카드 리스트 -->
-    <div class="d-md-none">
-        {% if questions %}
-            {% for question in questions %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge bg-secondary">{{ question.category.name }}</span>
-                        <small class="text-muted">{{ question.create_date|date:"Y-m-d" }}</small>
-                    </div>
-                    <h6 class="card-title">
-                        <a href="{% url 'board:detail' question.id %}" class="text-decoration-none text-dark">
-                            {{ question.subject }}
-                            {% if question.answer_set.count > 0 %}
-                            <span class="text-muted small">[{{ question.answer_set.count }}]</span>
-                            {% endif %}
-                        </a>
-                    </h6>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <small class="text-muted">{{ question.author.username }}</small>
-                        <span class="badge bg-primary">추천 {{ question.up_voter.count }}</span>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <div class="card-body text-center text-muted">
-                    {% if tab == 'posts' %}
-                        작성한 게시글이 없습니다.
-                    {% else %}
-                        댓글을 작성한 게시글이 없습니다.
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
+    <div id="myPostsWrapper">
+        {% include 'common/partials/_my_posts_section.html' %}
     </div>
-
-    <!-- 페이징 처리 -->
-    {% if questions.has_other_pages %}
-    <ul class="pagination justify-content-center mt-4">
-        {% if questions.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?tab={{ tab }}&page={{ questions.previous_page_number }}">이전</a>
-        </li>
-        {% endif %}
-        
-        {% for page_num in questions.paginator.page_range %}
-            {% if page_num == questions.number %}
-            <li class="page-item active">
-                <span class="page-link">{{ page_num }}</span>
-            </li>
-            {% else %}
-            <li class="page-item">
-                <a class="page-link" href="?tab={{ tab }}&page={{ page_num }}">{{ page_num }}</a>
-            </li>
-            {% endif %}
-        {% endfor %}
-        
-        {% if questions.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?tab={{ tab }}&page={{ questions.next_page_number }}">다음</a>
-        </li>
-        {% endif %}
-    </ul>
-    {% endif %}
 </div>
+{% endblock %}
 
+{% block script %}
+<style>
+#myPostsWrapper.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+</style>
+<script>
+(function() {
+    const wrapper = document.getElementById('myPostsWrapper');
+    if (!wrapper) return;
+
+    const fetchSection = (url) => {
+        wrapper.classList.add('loading');
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to load content');
+                return res.text();
+            })
+            .then((html) => {
+                wrapper.innerHTML = html;
+                window.history.replaceState({}, '', url);
+                window.scrollTo({ top: wrapper.offsetTop - 60, behavior: 'smooth' });
+            })
+            .catch(() => {
+                alert('새로고침 후 다시 시도해주세요.');
+            })
+            .finally(() => {
+                wrapper.classList.remove('loading');
+            });
+    };
+
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a.js-my-posts-link');
+        if (!link) return;
+        event.preventDefault();
+        fetchSection(link.href);
+    });
+})();
+</script>
 {% endblock %}

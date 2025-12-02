@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.venv
+venv/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+nadostatic/
+nadofiles/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Environment
+.env
+secure/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Others
+*.md
+!README.md
