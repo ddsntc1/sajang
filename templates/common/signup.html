@@ -77,6 +77,20 @@
                             value="{{form.business_name.value|default_if_none:''}}" placeholder="운영중인 사업장 이름">
                     </div>
 
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" value="on" id="terms_agree" name="terms_agree" {% if form.terms_agree.value %}checked{% endif %} required>
+                        <label class="form-check-label small text-muted" for="terms_agree">
+                            <strong>이용약관</strong>에 동의합니다.
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" value="on" id="privacy_agree" name="privacy_agree" {% if form.privacy_agree.value %}checked{% endif %} required>
+                        <label class="form-check-label small text-muted" for="privacy_agree">
+                            <strong>개인정보 처리방침</strong>에 동의합니다.
+                        </label>
+                    </div>
+
                     <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-3 fw-bold shadow-sm">회원가입
                         완료</button>
                 </form>

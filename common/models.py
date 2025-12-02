@@ -48,6 +48,26 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
         help_text=_('필수. 인증에 사용될 이메일을 입력해주세요.')
     )
+    terms_agree = models.BooleanField(
+        _('이용약관 동의'),
+        default=False,
+        help_text=_('이용약관에 동의했습니다.')
+    )
+    terms_agree_date = models.DateTimeField(
+        _('이용약관 동의 일시'),
+        null=True,
+        blank=True
+    )
+    privacy_agree = models.BooleanField(
+        _('개인정보 처리 동의'),
+        default=False,
+        help_text=_('개인정보 처리방침에 동의했습니다.')
+    )
+    privacy_agree_date = models.DateTimeField(
+        _('개인정보 처리 동의 일시'),
+        null=True,
+        blank=True
+    )
     business_type = models.ForeignKey(
         BusinessType,
         on_delete=models.SET_NULL,
@@ -175,6 +195,10 @@ class PendingUser(models.Model):
     business_name = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     activation_token = models.CharField(max_length=150)
+    terms_agree = models.BooleanField(default=False)
+    terms_agree_date = models.DateTimeField(null=True, blank=True)
+    privacy_agree = models.BooleanField(default=False)
+    privacy_agree_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = _('대기 중인 사용자')

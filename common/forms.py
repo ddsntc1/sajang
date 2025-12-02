@@ -28,6 +28,15 @@ class CustomUserCreationForm(UserCreationForm):
         validators=[user_id_validator],
         label='아이디'
     )
+
+    privacy_agree = forms.BooleanField(
+        required=True,
+        label=_('개인정보 처리방침 동의')
+    )
+    terms_agree = forms.BooleanField(
+        required=True,
+        label=_('이용약관 동의')
+    )
     
     username = forms.CharField(
         min_length=2,
@@ -37,7 +46,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'user_id', 'email', 'business_type', 'business_name', 'password1', 'password2')
+        fields = ('username', 'user_id', 'email', 'business_type', 'business_name', 'terms_agree', 'privacy_agree', 'password1', 'password2')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
