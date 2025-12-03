@@ -21,6 +21,14 @@
                 <div class="position-absolute top-0 end-0 translate-middle-y me-n5 mt-n5 rounded-circle bg-white opacity-10" style="width: 300px; height: 300px; z-index: 0;"></div>
                 <div class="position-absolute bottom-0 start-0 translate-middle-x ms-n5 mb-n5 rounded-circle bg-white opacity-10" style="width: 200px; height: 200px; z-index: 0;"></div>
             </div>
+            {% if hero_advertisement %}
+            <div class="mb-4">
+                <a href="{{ hero_advertisement.external_link }}" target="_blank" class="d-block position-relative overflow-hidden rounded-4 shadow-sm">
+                    <img src="{{ hero_advertisement.main_banner.url }}" alt="{{ hero_advertisement.question.subject }}" class="img-fluid w-100 object-fit-cover" style="max-height: 320px;">
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75">AD</span>
+                </a>
+            </div>
+            {% endif %}
 
             <!-- Mobile Login Widget (Visible only on small screens) -->
             <div class="d-lg-none mb-4">
