@@ -44,19 +44,19 @@ class WebsiteTest(HttpUser):
     def message_list(self):
         self.client.get("/board/messages/")
         
-    @task(1)
-    def send_message(self):
-        # 메시지 작성 폼에서 CSRF 토큰 확보
-        res = self.client.get("/board/messages/send/")
-        match = csrf_re.search(res.text)
-        if not match:
-            return
+    # @task(1)
+    # def send_message(self):
+    #     # 메시지 작성 폼에서 CSRF 토큰 확보
+    #     res = self.client.get("/board/messages/send/")
+    #     match = csrf_re.search(res.text)
+    #     if not match:
+    #         return
 
-        token = match.group(1)
-        content = f"hello from locust #{random.randint(1, 9999)}"
-        self.client.post(
-            "/board/messages/send/",
-            data={"receiver": "카페", "content": content, "csrfmiddlewaretoken": token},
-            headers={"Referer": "/board/messages/send/"},
-            name="send_message",
-        )
+    #     token = match.group(1)
+    #     content = f"hello from locust #{random.randint(1, 9999)}"
+    #     self.client.post(
+    #         "/board/messages/send/",
+    #         data={"receiver": "카페", "content": content, "csrfmiddlewaretoken": token},
+    #         headers={"Referer": "/board/messages/send/"},
+    #         name="send_message",
+    #     )
