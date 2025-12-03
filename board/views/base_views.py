@@ -5,53 +5,84 @@ from django.utils import timezone
 from django.db.models import F
 
 
+
 def index(request):
     now = timezone.now()
-    
-    # 승인된 활성 광고만 가져오기
-    active_advertisements = Advertisement.objects.filter(
+
+    # 광고 영역 (문제 없음)
+    active_advertisements = (
+    Advertisement.objects
+    .select_related("question", "question__author", "question__category")
+    .filter(
         status='approved',
         start_date__lte=now,
         end_date__gte=now
+        )
     )
-    
-    # 메인  포스터터
-    hero_advertisement = active_advertisements.filter(
-        main_banner__isnull = False,
-        main_poster = True
-    ).first()
-    
-    # 메인 배너용 광고
-    main_advertisements = active_advertisements.filter(
-        main_banner__isnull=False  # 메인 배너가 있는 광고
-    ).exclude(main_poster=True).order_by('order')
-    
-    # 사이드 배너용 광고
-    side_advertisements = active_advertisements.filter(
-        side_banner__isnull=False  # 사이드 배너가 있는 광고
-    ).exclude(main_poster=True).order_by('order')
+
+    hero_advertisement = (
+    active_advertisements
+    .filter(main_banner__isnull=False, main_poster=True)
+    .first()
+    )
+
+    main_advertisements = (
+        active_advertisements
+        .filter(main_banner__isnull=False)
+        .exclude(main_poster=True)
+        .order_by('order')
+    )
+
+    side_advertisements = (
+        active_advertisements
+        .filter(side_banner__isnull=False)
+        .exclude(main_poster=True)
+        .order_by('order')
+    )
 
 
-    hot_posts = Question.objects.annotate(
-        voter_count=Count('up_voter')
-    ).filter(
+    # 1. 인기 게시글 (N+1 제거)
+    hot_posts = list(Question.objects
+    .select_related("category", "author")
+    .prefetch_related("up_voter")
+    .annotate(
+        voter_count=Count("up_voter", distinct=True),
+        answer_count=Count("answer", distinct=True)
+    )
+    .filter(
         create_date__gte=now - timezone.timedelta(days=31),
-        category__type__in=['board', 'story'] 
-    ).order_by('-voter_count')[:10]
+        category__type__in=["board", "story"]
+    )
+        .order_by("-voter_count")[:10]
+    )
 
-    government_news = Question.objects.filter(category__slug = 'gov').order_by('-create_date')[:5]
-    business_trends = Question.objects.filter(category__slug = 'trend').order_by('-create_date')[:5]
+    government_news = list(Question.objects
+        .select_related("category", "author")
+        .annotate(answer_count=Count("answer"))
+        .filter(category__slug="gov")
+        .order_by("-create_date")[:5]
+    )
+
+    business_trends = list(Question.objects
+        .select_related("category", "author")
+        .annotate(answer_count=Count("answer"))
+        .filter(category__slug="trend")
+        .order_by("-create_date")[:5]
+    )
+
+    main_advertisements = list(main_advertisements)
+    side_advertisements = list(side_advertisements)
 
     context = {
-        'hero_advertisement' : hero_advertisement,
-        'main_advertisements': main_advertisements,
-        'side_advertisements': side_advertisements,
-        'hot_posts': hot_posts,
-        'government_news' : government_news,
-        'business_trends': business_trends,
+        "hero_advertisement": hero_advertisement,
+        "main_advertisements": main_advertisements,
+        "side_advertisements": side_advertisements,
+        "hot_posts": hot_posts,
+        "government_news": government_news,
+        "business_trends": business_trends,
     }
 
-    return render(request, 'board/main.html', context)
+    return render(request, "board/main.html", context)
 
 
 

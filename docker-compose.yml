@@ -12,6 +12,7 @@ services:
     volumes:
       - .:/app
       - ./secure:/secure:ro
+      - ./silk:/var/www/silk
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
   db:

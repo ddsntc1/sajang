@@ -65,7 +65,7 @@
                             <small class="text-muted">
                                 {{ question.author.username }} | 
                                 {{ question.create_date|date:"Y.m.d" }} | 
-                                답변 {{ question.answer_set.count }}
+                                답변 {{ question.answer_count }}
                             </small>
                         </div>
                         {% if not forloop.last %}<hr>{% endif %}
