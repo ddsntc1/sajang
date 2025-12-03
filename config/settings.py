@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django_summernote',
     'django.contrib.sites',    
     'django.contrib.sitemaps',
+    # 'debug_toolbar',# 쿼리 갯수 측정 테스트용
+    'silk',
 ]
 
 #sitemap set
@@ -62,6 +64,7 @@ ASGI_MIDDLEWARE = [
 
 
 MIDDLEWARE = [
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # 쿼리 갯수 측정 테스트용
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,7 +73,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'silk.middleware.SilkyMiddleware',
 ]
+
+
+# INTERNAL_IPS = ['127.0.0.1']
+
 
 # 임시로 해놓자
 CSRF_TRUSTED_ORIGINS = [
@@ -89,10 +97,11 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'board.context_processors.categories',
-                'board.context_processors.board_categories',
-                'board.context_processors.board_business_categories',                
-                'board.context_processors.each_categories',
+                # 'board.context_processors.categories',
+                # 'board.context_processors.board_categories',
+                # 'board.context_processors.board_business_categories',                
+                # 'board.context_processors.each_categories',
+                'board.context_processors.global_context',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -216,3 +225,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Nginx static serving
 USE_X_FORWARDED_HOST = True
 FORCE_SCRIPT_NAME = ''
+
+
+SILKY_SQLITE_PATH = "/var/www/silk/silk.db"
+SILKY_PATHS = ['/board/', '/common/']
+SILKY_MAX_RECORDED_REQUESTS = 2000
+SILKY_PYTHON_PROFILER = True

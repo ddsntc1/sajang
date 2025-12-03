@@ -22,7 +22,7 @@
                     <small
                         class="badge-custom flex-shrink-0 {% if current_category == cat.slug %}bg-primary text-white{% else %}bg-light text-muted{% endif %}">
                         {% if cat.slug != 'all' %}
-                        {{ cat.questions.count }}
+                        {{ cat.q_count }}
                         {% else %}
                         {{board_Q_count}}
                         {% endif %}
@@ -47,7 +47,7 @@
                     <span class="text-truncate me-2">{{ cat.name }}</span>
                     <small class="badge-custom bg-light text-muted flex-shrink-0">
                         {% if cat.slug != 'all' %}
-                        {{ cat.questions.count }}
+                        {{ cat.q_count }}
                         {% else %}
                         {{board_Q_count}}
                         {% endif %}

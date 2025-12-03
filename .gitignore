@@ -13,4 +13,4 @@ secure/.env
 .mysql-data/
 .venv
 nadofiles/
-locustfile.py
+# locustfile.py
